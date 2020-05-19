@@ -1,6 +1,6 @@
-package com.example.zzpj.repository;
+package com.example.zzpj.games;
 
-import com.example.zzpj.model.Game;
+import com.example.zzpj.games.Game;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
