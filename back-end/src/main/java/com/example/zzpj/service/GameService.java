@@ -22,9 +22,30 @@ public class GameService {
     @Autowired
     GameRepository gameRepository;
 
+    private final String STEAM_KEY;
+
+    public GameService(String steam_key) {
+        STEAM_KEY = steam_key;
+    }
+
     public void importAllGamesFromSteam() throws IOException, ParseException {
+        String url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/";
+        String response = this.getResponse(url);
+
+        List<Game> games = this.parseAllGames(response);
+        this.saveAllGames(games);
+    }
+
+    public List<Long> getUserGamesFromSteam(String steamId) throws IOException, ParseException {
+        String url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key="+ STEAM_KEY +"&steamid="+ steamId +"/&format=json";
+        String response = this.getResponse(url);
+
+        return this.parseGamesId(response);
+    }
+
+    private String getResponse(String urlString) throws IOException {
         HttpURLConnection con;
-        URL url = new URL("https://api.steampowered.com/ISteamApps/GetAppList/v2/");
+        URL url = new URL(urlString);
         con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
 
@@ -44,11 +65,9 @@ public class GameService {
 
             in.close();
         }
-
-        List<Game> games = this.parseAllGames(content.toString());
-        System.out.println(games.size());
-        this.saveAllGames(games);
         con.disconnect();
+
+        return content.toString();
     }
 
     private List<Game> parseAllGames(String jsonString) throws ParseException {
@@ -65,7 +84,6 @@ public class GameService {
             games.add(new Game(id, (String) gameJson.get("name")));
         }
 
-        System.out.println(games.size());
         return games;
     }
 
@@ -73,4 +91,19 @@ public class GameService {
         gameRepository.saveAll(games);
     }
 
+    private List<Long> parseGamesId(String jsonString) throws ParseException {
+        List<Long> gamesId = new ArrayList<>();
+        JSONParser parser = new JSONParser();
+        JSONObject jobj = (JSONObject)parser.parse(jsonString);
+        JSONObject applist = (JSONObject) jobj.get("response");
+
+        JSONArray apps = (JSONArray) applist.get("games");
+
+        for (Object app : apps) {
+            JSONObject gameJson = (JSONObject) app;
+            gamesId.add((Long) gameJson.get("appid"));
+        }
+
+        return gamesId;
+    }
 }

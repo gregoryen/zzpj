@@ -3,11 +3,10 @@ package com.example.zzpj.controller;
 import com.example.zzpj.service.GameService;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("games")
@@ -18,5 +17,10 @@ public class GameController {
     @PutMapping("/import")
     public void importAllGames() throws IOException, ParseException {
         gameService.importAllGamesFromSteam();
+    }
+
+    @GetMapping("/user")
+    public List<Long> getUserGamesFromSteam(@RequestParam String steamId) throws IOException, ParseException {
+        return gameService.getUserGamesFromSteam(steamId);
     }
 }
