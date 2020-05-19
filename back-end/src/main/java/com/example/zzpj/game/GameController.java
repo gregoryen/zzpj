@@ -1,4 +1,4 @@
-package com.example.zzpj.controller;
+package com.example.zzpj.game;
 
 import com.example.zzpj.service.GameService;
 import org.json.simple.parser.ParseException;

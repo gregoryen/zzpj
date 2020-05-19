@@ -1,12 +1,15 @@
 package com.example.zzpj.service;
 
-import com.example.zzpj.model.Game;
-import com.example.zzpj.repository.GameRepository;
+import com.example.zzpj.game.Game;
+import com.example.zzpj.game.GameRepository;
+import com.example.zzpj.users.User;
+import com.example.zzpj.users.UserRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -19,13 +22,16 @@ import java.util.List;
 
 @Service
 public class GameService {
-    @Autowired
-    GameRepository gameRepository;
 
+    GameRepository gameRepository;
+    UserRepository userRepository;
     private final String STEAM_KEY;
 
-    public GameService(String steam_key) {
-        STEAM_KEY = steam_key;
+    @Autowired
+    public GameService(@Value("${steamKey}") String privateKeyString, UserRepository userRepository, GameRepository gameRepository){
+        this.gameRepository = gameRepository;
+        this.userRepository = userRepository;
+        STEAM_KEY = privateKeyString;
     }
 
     public void importAllGamesFromSteam() throws IOException, ParseException {
@@ -41,6 +47,22 @@ public class GameService {
         String response = this.getResponse(url);
 
         return this.parseGamesId(response);
+    }
+    public boolean insertUserGamesToDb(String steamId){
+        try {
+            List<Long> userGames = getUserGamesFromSteam(steamId);
+            User user = userRepository.getBySteamId(Long.parseLong(steamId));
+            user.setGames(new ArrayList<>());
+            for(Long id : userGames){
+                Game game =gameRepository.getByAppid(id);
+                user.getGames().add(game);
+            }
+            userRepository.save(user);
+            return true;
+        }
+        catch(Exception e){
+            return false;
+        }
     }
 
     private String getResponse(String urlString) throws IOException {
@@ -81,7 +103,10 @@ public class GameService {
         for (Object app : apps) {
             JSONObject gameJson = (JSONObject) app;
             Long id = (Long) gameJson.get("appid");
-            games.add(new Game(id, (String) gameJson.get("name")));
+            Game game = new Game();
+            game.setAppid(id);
+            game.setName((String)gameJson.get("name"));
+            games.add(game);
         }
 
         return games;
