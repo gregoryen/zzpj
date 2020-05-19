@@ -42,8 +42,8 @@ public class GameQueueService {
                 newQueue.addPlayerToQueue(user);
                 gameQueueRepository.save(newQueue);
             }
-            user.getQueues().add(newQueue);
-            userRepository.save(user);
+//            user.getQueues().add(newQueue);
+//            userRepository.save(user);
         }
 
     }
@@ -56,7 +56,7 @@ public class GameQueueService {
         Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
         return optionalGameQueue.orElse(null);
     }
-    
+
 
     public void removePlayerFromQueue(String login, String gameName){
 
@@ -76,7 +76,7 @@ public class GameQueueService {
 
                 queue.removePlayerFromQueue(user);
                 userRepository.save(user);
-                if (optionalGameQueue.get().getPlayersInQueue().size()  - 1 == 0) {
+                if (optionalGameQueue.get().getPlayersInQueue().size()  == 0) {
 
                     gameQueueRepository.delete(queue);
 

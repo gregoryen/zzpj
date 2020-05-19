@@ -1,6 +1,7 @@
 package com.example.zzpj.game;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,8 @@ public class Game {
 
     private String name;
 
-    @JsonBackReference
+    //@JsonBackReference
+    @JsonIgnore
     @ManyToMany(mappedBy="Games")
     private Collection<User> users;
 }

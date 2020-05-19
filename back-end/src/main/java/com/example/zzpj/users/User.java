@@ -56,14 +56,12 @@ public class User implements Serializable {
 
     public void addQueue(GameQueue game){
         queues.add(game);
+        game.getPlayersInQueue().add(this);
     }
 
     public void removeQueue(GameQueue game){
-        for (GameQueue it: queues) {
-            if (it == queues) {
-                queues.remove(it);
-            }
-        }
+        queues.remove(game);
+        game.removePlayerFromQueue(this);
     }
 
     @JsonIgnore

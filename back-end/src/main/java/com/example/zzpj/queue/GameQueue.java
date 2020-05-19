@@ -34,14 +34,12 @@ public class GameQueue {
 
     public void addPlayerToQueue(User user){
         playersInQueue.add(user);
+        user.getQueues().add(this);
     }
 
     public void removePlayerFromQueue(User user){
-        for (User it: playersInQueue){
-            if (it.equals(user)){
-                playersInQueue.remove(user);
-            }
-        }
+        playersInQueue.remove(user);
+        user.getQueues().remove(this);
     }
 
 
