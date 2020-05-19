@@ -1,0 +1,10 @@
+#Uzytkonik
+
+Rejestrowanie
+steamId - na razie jest long, jak ktos ma customizowane steam id to powinine sprawdzic jaki ma prawdziwy identyfikator
+http://localhost:8080/signUp
+{
+	"login": "bigracz",
+	"password": "password",
+	"steamId": ""
+}
