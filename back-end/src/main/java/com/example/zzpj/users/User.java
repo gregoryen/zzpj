@@ -1,5 +1,6 @@
 package com.example.zzpj.users;
 
+import com.example.zzpj.squad.Squad;
 import com.example.zzpj.queue.GameQueue;
 import com.example.zzpj.game.Game;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,6 +51,13 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "queue_id"))
     private List<GameQueue> queues;
 
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(name = "user_squad",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "squad_id"))
+    private List<Squad> squads;
+
     public User() {
         this.queues = new ArrayList<>();
     }
@@ -70,6 +78,5 @@ public class User implements Serializable {
     }
 
 }
-
 
 
