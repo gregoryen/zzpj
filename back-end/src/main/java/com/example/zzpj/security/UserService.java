@@ -30,6 +30,7 @@ public class UserService implements IUserService {
 
         account.setPassword(encoder.encode(account.getPassword()));
         User user = transformer.transform(account);
+        user.setRate(-1.0);
 
         return userRepository.save(user);
     }
@@ -45,5 +46,16 @@ public class UserService implements IUserService {
         User alreadyRegistered = userRepository.getByLogin(account.getLogin());
 
         return alreadyRegistered != null;
+    }
+
+    public boolean rateUser(final long userId, final Double rate) {
+        if (rate < 1.0 || rate > 10.0)
+            return false;
+        User user = userRepository.getById(userId);
+        double oldRate = user.getRate();
+        double newRate = oldRate == User.NO_RATE ? rate : (oldRate + rate) / 2.0;
+        user.setRate(newRate);
+        userRepository.save(user);
+        return true;
     }
 }

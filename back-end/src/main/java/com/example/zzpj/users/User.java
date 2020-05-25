@@ -36,6 +36,11 @@ public class User implements Serializable {
     @Column(unique = true)
     private long steamId;
 
+    public static final double NO_RATE = -1.0;
+
+    @Column(name="rate")
+    private double rate;
+
     @JsonManagedReference
     @ManyToMany
     @JoinTable(name = "users_games",
@@ -62,7 +67,7 @@ public class User implements Serializable {
         this.queues = new ArrayList<>();
     }
 
-    public void addQueue(GameQueue game){
+    public void addQueue(GameQueue game) {
         queues.add(game);
         game.getPlayersInQueue().add(this);
     }

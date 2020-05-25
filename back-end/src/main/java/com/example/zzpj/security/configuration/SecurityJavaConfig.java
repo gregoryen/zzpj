@@ -89,7 +89,7 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/signUp", "/logIn").permitAll()
                 .antMatchers("/queue").permitAll()
-                .antMatchers("/squad").permitAll()
+                .antMatchers("/squad", "/user").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().successHandler(successHandler).failureHandler(failureHandler()).and()
