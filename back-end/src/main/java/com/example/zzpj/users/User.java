@@ -25,7 +25,6 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-
     @Column(unique = true)
     private String login;
 
@@ -35,11 +34,6 @@ public class User implements Serializable {
     @NonNull
     @Column(unique = true)
     private long steamId;
-
-    public static final double NO_RATE = -1.0;
-
-    @Column(name="rate")
-    private double rate;
 
     @JsonManagedReference
     @ManyToMany
