@@ -1,22 +1,22 @@
 package com.example.zzpj.users;
 
 
+import com.example.zzpj.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("user")
 public class UserController {
 
-    private UserRepository userRepository;
-
+    private UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
-
-
-
-
 }

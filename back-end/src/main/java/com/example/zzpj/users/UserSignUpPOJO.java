@@ -12,7 +12,4 @@ public class UserSignUpPOJO {
     private String login;
     private String password;
     private long steamId;
-
-
-
 }

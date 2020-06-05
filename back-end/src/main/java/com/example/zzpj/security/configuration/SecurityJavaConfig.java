@@ -88,6 +88,8 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and()
                 .authorizeRequests()
                 .antMatchers("/signUp", "/logIn").permitAll()
+                .antMatchers("/queue").permitAll()
+                .antMatchers("/squad", "/user").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().successHandler(successHandler).failureHandler(failureHandler()).and()
