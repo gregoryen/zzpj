@@ -2,16 +2,14 @@
 language: java
 #we add the java development kit (jdk)
 
-before_install:
- - chmod +x back-end/mvnw
-
 jdk:
   - oraclejdk11
 
 services:
   - mysql
   
-
+before_install:
+ - chmod +x back-end/mvnw
 
 before_script:
   - mysql -e 'DROP DATABASE IF EXISTS zzpj;'
