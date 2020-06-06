@@ -3,7 +3,7 @@ language: java
 #we add the java development kit (jdk)
 
 before_install:
- - chmod +x backend/mvnw
+ - chmod +x back-end/mvnw
 
 jdk:
   - oraclejdk11
