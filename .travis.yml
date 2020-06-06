@@ -9,7 +9,7 @@ services:
   - mysql
   
 before_install:
- - chmod +x back-end/mvnw
+ - chmod +x mvnw
 
 before_script:
   - mysql -e 'DROP DATABASE IF EXISTS zzpj;'
