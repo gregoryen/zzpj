@@ -9,6 +9,7 @@ public class ZzpjApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ZzpjApplication.class, args);
+
 	}
 
 }
