@@ -63,7 +63,7 @@ public class GameQueueService {
         User user = findUserByLogin(login);
 
         Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
-
+        //..
         //optionalGameQueue.ifPresent(gameQueue -> gameQueue.removePlayerFromQueue(user));
         if(user!=null) {
 
