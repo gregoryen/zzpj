@@ -42,9 +42,9 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "game_app_id", referencedColumnName = "app_id"))
     private Collection<Game> Games;
 
-    //@JsonManagedReference
+    @JsonManagedReference
     @ManyToMany
-    @JsonIgnore
+    //@JsonIgnore
     @JoinTable(name = "user_queue",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "queue_id"))
