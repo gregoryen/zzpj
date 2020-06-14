@@ -41,8 +41,6 @@ public class UserStatsService {
         String mostPlayedGame = mostPlayed != null ? gameRepository.getByAppid(mostPlayed.getAppid()).getName() : "-";
         String mostPlayedGame2Weeks = mostPlayed2Weeks != null ?  gameRepository.getByAppid(mostPlayed2Weeks.getAppid()).getName() : "-";
 
-        squadRepository.findAll();
-
         return UserStats.builder()
                 .login(login)
                 .games(games)
