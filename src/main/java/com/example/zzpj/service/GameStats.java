@@ -7,9 +7,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class GameStats {
     private long appid;
-    private int playtime2Weeks;
-    private int playtimeForever;
-    private int playtimeWindows;
-    private int playtimeMac;
-    private int playtimeLinux;
+    private long playtime2Weeks;
+    private long playtimeForever;
+    private long playtimeWindows;
+    private long playtimeMac;
+    private long playtimeLinux;
 }

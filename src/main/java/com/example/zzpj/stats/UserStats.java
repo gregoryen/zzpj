@@ -8,8 +8,8 @@ import lombok.Data;
 public class UserStats {
     String login;
     int games;
-    int playtime;
-    int playtime2Weeks;
+    long playtime;
+    long playtime2Weeks;
     String mostPlayedGame;
     String mostPlayedGame2Weeks;
 }

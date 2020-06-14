@@ -29,10 +29,10 @@ public class UserStatsService {
         List<GameStats> gameStats = gameService.getUserGameStats(steamID);
 
         int games = gameStats.size();
-        int playtime = gameStats.stream().mapToInt(GameStats::getPlaytimeForever).sum();
-        int playtime2Weeks = gameStats.stream().mapToInt(GameStats::getPlaytime2Weeks).sum();
-        GameStats mostPlayed = gameStats.stream().max(Comparator.comparingInt(GameStats::getPlaytimeForever)).orElse(null);
-        GameStats mostPlayed2Weeks = gameStats.stream().max(Comparator.comparingInt(GameStats::getPlaytime2Weeks)).orElse(null);
+        long playtime = gameStats.stream().mapToLong(GameStats::getPlaytimeForever).sum();
+        long playtime2Weeks = gameStats.stream().mapToLong(GameStats::getPlaytime2Weeks).sum();
+        GameStats mostPlayed = gameStats.stream().max(Comparator.comparingLong(GameStats::getPlaytimeForever)).orElse(null);
+        GameStats mostPlayed2Weeks = gameStats.stream().max(Comparator.comparingLong(GameStats::getPlaytime2Weeks)).orElse(null);
 
         String mostPlayedGame = mostPlayed != null ? gameRepository.getByAppid(mostPlayed.getAppid()).getName() : "-";
         String mostPlayedGame2Weeks = mostPlayed2Weeks != null ?  gameRepository.getByAppid(mostPlayed2Weeks.getAppid()).getName() : "-";
