@@ -48,6 +48,14 @@ public class GameService {
 
         return this.parseGamesId(response);
     }
+
+    public List<GameStats> getUserGameStats(long steamId) throws IOException, ParseException {
+        String url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key="+ STEAM_KEY +"&steamid="+ steamId +"/&format=json";
+        String response = this.getResponse(url);
+
+        return this.parseUserGames(response);
+    }
+
     public boolean insertUserGamesToDb(String steamId){
         try {
             List<Long> userGames = getUserGamesFromSteam(steamId);
@@ -130,5 +138,28 @@ public class GameService {
         }
 
         return gamesId;
+    }
+
+    private List<GameStats> parseUserGames(String jsonString) throws ParseException {
+        List<GameStats> games = new ArrayList<>();
+        JSONParser parser = new JSONParser();
+        JSONObject jobj = (JSONObject)parser.parse(jsonString);
+        JSONObject applist = (JSONObject) jobj.get("response");
+
+        JSONArray apps = (JSONArray) applist.get("games");
+
+        for (Object app : apps) {
+            JSONObject gameJson = (JSONObject) app;
+            long appid = (long) gameJson.get("appid");
+            int playtimeForever = (int) gameJson.get("playtime_forever");
+            int playtimeWindows = (int) gameJson.get("playtime_windows_forever");
+            int playtimeMac = (int) gameJson.get("playtime_mac_forever");
+            int playtimeLinux = (int) gameJson.get("playtime_linux_forever");
+            Object playtime = gameJson.get("playtime_2weeks");
+            int playtime2Weeks = playtime == null ? 0 : (int) playtime;
+            games.add(new GameStats(appid, playtime2Weeks, playtimeForever, playtimeWindows, playtimeMac, playtimeLinux));
+        }
+
+        return games;
     }
 }

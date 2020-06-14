@@ -11,8 +11,12 @@ import java.util.List;
 @RestController
 @RequestMapping("games")
 public class GameController {
-    @Autowired
+
     private GameService gameService;
+
+    public GameController(@Autowired GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @PutMapping("/import")
     public void importAllGames() throws IOException, ParseException {
