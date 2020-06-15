@@ -2,7 +2,7 @@ package com.example.zzpj.stats;
 
 import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
-import com.example.zzpj.service.GameService;
+import com.example.zzpj.game.GameService;
 import com.example.zzpj.service.GameStats;
 import com.example.zzpj.squad.SquadRepository;
 import com.example.zzpj.users.User;
@@ -19,7 +19,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyByte;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -79,16 +78,13 @@ class UserStatsServiceTest {
         User user = User.builder().login("login").steamId(123).password("password").build();
         Game game1 = new Game(0,"cs:go ",null,null);
         Game game2 = new Game(2,"StarCraft",null,null);
-
         when(userRepository.findByLogin(any())).thenReturn(java.util.Optional.ofNullable(user));
         when(gameService.getUserGameStats(123)).thenReturn(gameStats);
         when(gameRepository.getByAppid(0L)).thenReturn(game1);
         when(gameRepository.getByAppid(2L)).thenReturn(game2);
         userStatsService = new UserStatsService(gameService, gameRepository, userRepository, squadRepository);
-
         //when
         UserStats gameStats = userStatsService.getUserStats("login");
-
         //then
         assertEquals(gameStats.getGames(), 3);
         assertEquals(gameStats.getLogin(), "login");

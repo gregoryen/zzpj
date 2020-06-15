@@ -1,6 +1,5 @@
 package com.example.zzpj.game;
 
-import com.example.zzpj.service.GameService;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +28,6 @@ public class GameController {
     @GetMapping("/user")
     public List<Long> getUserGamesFromSteam(@RequestParam String steamId) throws IOException, ParseException {
         //return gameService.getUserGamesFromSteam(SecurityContextHolder.getContext().getAuthentication().getName());
-        return gameService.getUserGamesFromSteam(steamId);
+        return gameService.getUserGamesFromSteam(Long.parseLong(steamId));
     }
 }

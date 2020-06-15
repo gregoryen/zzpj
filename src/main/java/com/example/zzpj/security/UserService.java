@@ -1,6 +1,7 @@
 package com.example.zzpj.security;
 
 
+import com.example.zzpj.game.GameService;
 import com.example.zzpj.users.*;
 import com.example.zzpj.users.exceptions.LoginAlreadyUsedException;
 import com.example.zzpj.users.exceptions.SteamIdAlreadyUsedException;
@@ -15,12 +16,15 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final UserSignUpPOJOToUserTransformer transformer;
     private final PasswordEncoder encoder;
+    private final GameService gameService;
+
 
     @Autowired
-    public UserService(PasswordEncoder encoder, UserRepository userRepository, UserSignUpPOJOToUserTransformer transformer) {
+    public UserService(PasswordEncoder encoder, UserRepository userRepository, UserSignUpPOJOToUserTransformer transformer, GameService gameService) {
         this.encoder = encoder;
         this.userRepository = userRepository;
         this.transformer = transformer;
+        this.gameService = gameService;
     }
 
     @Override
@@ -34,8 +38,10 @@ public class UserService implements IUserService {
 
         account.setPassword(encoder.encode(account.getPassword()));
         User user = transformer.transform(account);
-
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        gameService.insertUserGamesToDb(user.getSteamId());
+        System.out.println(user.getGames());
+        return user;
     }
 
     public UserTokenInformation getUserDetailsForToken(String login) {

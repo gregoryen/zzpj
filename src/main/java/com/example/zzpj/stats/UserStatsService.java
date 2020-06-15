@@ -1,7 +1,7 @@
 package com.example.zzpj.stats;
 
 import com.example.zzpj.game.GameRepository;
-import com.example.zzpj.service.GameService;
+import com.example.zzpj.game.GameService;
 import com.example.zzpj.service.GameStats;
 import com.example.zzpj.squad.SquadRepository;
 import com.example.zzpj.users.User;

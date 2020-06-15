@@ -4,7 +4,7 @@ package com.example.zzpj.security.authentication;
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.jwt.JwtResponse;
 import com.example.zzpj.security.jwt.JwtUtil;
-import com.example.zzpj.service.GameService;
+import com.example.zzpj.game.GameService;
 import com.example.zzpj.users.UserSignInPOJO;
 import com.example.zzpj.users.UserSignUpPOJO;
 import com.example.zzpj.users.UserTokenInformation;
@@ -81,7 +81,7 @@ public class AuthenticationController {
     private boolean createUserAccount(UserSignUpPOJO accountDetails) {
         try {
             userService.registerNewUserAccount(accountDetails);
-            gameService.insertUserGamesToDb(Long.toString(accountDetails.getSteamId()));
+            gameService.insertUserGamesToDb(accountDetails.getSteamId());
             return true;
         } catch (UserException ue) {
             return false;

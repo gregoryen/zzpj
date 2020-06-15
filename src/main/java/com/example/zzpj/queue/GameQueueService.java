@@ -2,11 +2,15 @@ package com.example.zzpj.queue;
 
 
 import com.example.zzpj.game.Game;
+import com.example.zzpj.queue.exception.GameNotFoundInUserCollectionException;
 import com.example.zzpj.queue.exception.GameQueueException;
+import com.example.zzpj.queue.exception.GameQueueNotExistException;
+import com.example.zzpj.queue.exception.UserAlreadyInQueueException;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.exceptions.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -25,26 +29,32 @@ public class GameQueueService {
         this.userRepository = userRepository;
     }
 
-    public void addPlayerToQueue(String login, String gameName){
+    public void addPlayerToQueue(String login, String gameName) throws GameNotFoundInUserCollectionException, UsernameNotFoundException, UserAlreadyInQueueException{
 
         User user = findUserByLogin(login);
-
         Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
-
         if (user!= null) {
-            GameQueue newQueue;
-            if (optionalGameQueue.isPresent()) {
-                optionalGameQueue.get().addPlayerToQueue(user);
-                newQueue = optionalGameQueue.get();
-                gameQueueRepository.save(optionalGameQueue.get());
-            } else {
-                newQueue = new GameQueue(gameName);
-                newQueue.addPlayerToQueue(user);
-                gameQueueRepository.save(newQueue);
+            if(user.getGames().stream().filter(game -> game.getName().equals(gameName)).findAny().isPresent()) {
+                if (optionalGameQueue.isPresent()) {
+                    if(optionalGameQueue.get().getPlayersInQueue().stream().filter(user1 -> user1.getLogin().equals(user.getLogin())).findAny().isEmpty()) {
+                        optionalGameQueue.get().addPlayerToQueue(user);
+                        gameQueueRepository.save(optionalGameQueue.get());
+                    }
+                    else
+                        throw new UserAlreadyInQueueException(user.getLogin());
+                    } else {
+                    GameQueue newQueue;
+                    newQueue = new GameQueue(gameName);
+                    newQueue.addPlayerToQueue(user);
+                    gameQueueRepository.save(newQueue);
+                }
             }
-//            user.getQueues().add(newQueue);
-//            userRepository.save(user);
+            else
+                throw new GameNotFoundInUserCollectionException(gameName);
         }
+        else
+            throw new UsernameNotFoundException(login);
+
 
     }
 
@@ -58,7 +68,7 @@ public class GameQueueService {
     }
 
 
-    public void removePlayerFromQueue(String login, String gameName){
+    public void removePlayerFromQueue(String login, String gameName) throws UsernameNotFoundException{
 
         User user = findUserByLogin(login);
 
@@ -89,6 +99,7 @@ public class GameQueueService {
         }
 
 
+
     }
 
     public void createQueue(String gameName){
@@ -97,16 +108,16 @@ public class GameQueueService {
 
     }
 
-    public void removeQueue(String gameName) throws GameQueueException{
-
-        Optional<GameQueue> optionalGameQueue = Optional
-                .ofNullable(gameQueueRepository
-                        .findByGameName(gameName))
-                .orElseThrow(() -> new GameQueueException("Queue for this game doesn't exist")
-                );
-
-        gameQueueRepository.deleteGameQueueByGameName(gameName);
-
+    public void removeQueue(String gameName) throws GameQueueNotExistException{
+        Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
+        if(optionalGameQueue.isPresent()){
+            for(User user : optionalGameQueue.get().getPlayersInQueue()){
+                removePlayerFromQueue(user.getLogin(),gameName);
+            }
+            gameQueueRepository.deleteGameQueueByGameName(gameName);
+        }
+        else
+            throw new GameQueueNotExistException("Queue for this game doesn't exist");
     }
 
     private User findUserByLogin(String login){

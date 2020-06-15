@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
     Game getByAppid(Long appId);
+
     List<Game> findAll();
 }
