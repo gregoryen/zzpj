@@ -19,8 +19,12 @@ public class GameController {
         gameService.importAllGamesFromSteam();
     }
 
+    //TODO nie wiem czy nie powinnismy robic jak w komentarzu ze te get i posty sa od tokenu zalezne
+    // bo wtedy kazdy zalogowany moze podgladac innego w tych postach wystarcyz ze w param wpisze nie swoje dane
+
     @GetMapping("/user")
     public List<Long> getUserGamesFromSteam(@RequestParam String steamId) throws IOException, ParseException {
+        //return gameService.getUserGamesFromSteam(SecurityContextHolder.getContext().getAuthentication().getName());
         return gameService.getUserGamesFromSteam(steamId);
     }
 }

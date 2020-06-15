@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +20,7 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "Games")
 @Builder(access = AccessLevel.PUBLIC)
 @Entity
+@Transactional
 @Table(name = "users")
 public class User implements Serializable {
     @Id
@@ -36,7 +38,7 @@ public class User implements Serializable {
     private long steamId;
 
     @JsonManagedReference
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_games",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "game_app_id", referencedColumnName = "app_id"))

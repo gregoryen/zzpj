@@ -3,6 +3,7 @@ package com.example.zzpj.security;
 
 import com.example.zzpj.users.*;
 import com.example.zzpj.users.exceptions.LoginAlreadyUsedException;
+import com.example.zzpj.users.exceptions.SteamIdAlreadyUsedException;
 import com.example.zzpj.users.exceptions.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,9 @@ public class UserService implements IUserService {
         if (emailAlreadyExists(account)) {
             throw new LoginAlreadyUsedException("There is an account with that login: " + account.getLogin());
         }
+        if(steamIdAlreadyExists(account)){
+            throw new SteamIdAlreadyUsedException("There is an account with that steamId: " + account.getSteamId());
+        }
 
         account.setPassword(encoder.encode(account.getPassword()));
         User user = transformer.transform(account);
@@ -43,6 +47,11 @@ public class UserService implements IUserService {
 
     private boolean emailAlreadyExists(UserSignUpPOJO account) {
         User alreadyRegistered = userRepository.getByLogin(account.getLogin());
+
+        return alreadyRegistered != null;
+    }
+    private boolean steamIdAlreadyExists(UserSignUpPOJO account) {
+        User alreadyRegistered = userRepository.getBySteamId(account.getSteamId());
 
         return alreadyRegistered != null;
     }

@@ -116,18 +116,17 @@ public class GameService {
         gameRepository.saveAll(games);
     }
 
-    private List<Long> parseGamesId(String jsonString) throws ParseException {
+    public List<Long> parseGamesId(String jsonString) throws ParseException {
         List<Long> gamesId = new ArrayList<>();
         JSONParser parser = new JSONParser();
         JSONObject jobj = (JSONObject)parser.parse(jsonString);
         JSONObject applist = (JSONObject) jobj.get("response");
-
         JSONArray apps = (JSONArray) applist.get("games");
-
-        for (Object app : apps) {
-            JSONObject gameJson = (JSONObject) app;
-            gamesId.add((Long) gameJson.get("appid"));
-        }
+        if(apps != null)
+            for (Object app : apps) {
+                JSONObject gameJson = (JSONObject) app;
+                gamesId.add((Long) gameJson.get("appid"));
+            }
 
         return gamesId;
     }
