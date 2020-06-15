@@ -3,6 +3,7 @@ package com.example.zzpj.squad;
 import com.example.zzpj.game.GameController;
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.service.GameService;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,5 +33,15 @@ public class SquadController {
     @PutMapping(path = "/assign", consumes = "application/json")
     public void assignUser(@RequestParam Long squadId, @RequestParam Long userId) {
         squadService.assignUser(squadId, userId);
+    }
+
+    @GetMapping(path = "/all")
+    public List<JSONObject> getAllSquads() {
+        return squadService.getAllSquads();
+    }
+
+    @GetMapping(path = "/bySquadId")
+    public List<JSONObject> getUsersBySquadId(@RequestParam long squadId) {
+        return squadService.getUsersBySquadId(squadId);
     }
 }

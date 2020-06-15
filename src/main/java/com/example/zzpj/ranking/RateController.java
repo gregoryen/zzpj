@@ -28,7 +28,7 @@ public class RateController {
     }
 
     @GetMapping(path = "/bySquadId")
-    public ResponseEntity<List<JSONObject>> getUsersBySquadId(@RequestParam long squadId) {
+    public ResponseEntity<List<JSONObject>> getRankingBySquadId(@RequestParam long squadId) {
         List<JSONObject> rates = rateService.getRankingBySquadId(squadId);
         return rates.size() != 0
                 ? new ResponseEntity<>(rates, HttpStatus.OK)

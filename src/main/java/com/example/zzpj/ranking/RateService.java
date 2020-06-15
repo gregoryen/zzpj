@@ -33,10 +33,11 @@ public class RateService {
         String validationMessage = validateInput(rate);
         if (validationMessage.equals("")) {
             Optional<Rate> optionalRate = rateRepository.findByFkUserIdAndFkSquadId(rate.getFkUserId(), rate.getFkSquadId());
-            if (optionalRate.isPresent())
+            if (optionalRate.isPresent()) {
                 updateValueOfRate(rate.getRateValue(), optionalRate.get());
-            else
+            } else {
                 rateRepository.save(rate);
+            }
         }
         return validationMessage;
     }
