@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.support.NullValue;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service("squadService")
@@ -38,6 +39,9 @@ public class SquadService {
     public void assignUser(Long squadId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         Squad squad = squadRepository.findById(squadId).orElseThrow();
+        if(squad.getUsers() == null){
+            squad.setUsers(new ArrayList<>());
+        }
         squad.addUser(user);
         squadRepository.save(squad);
     }
