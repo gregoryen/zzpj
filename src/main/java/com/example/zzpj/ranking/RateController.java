@@ -1,6 +1,5 @@
 package com.example.zzpj.ranking;
 
-import org.apache.coyote.Response;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

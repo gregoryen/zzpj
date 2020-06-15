@@ -99,4 +99,8 @@ public class RateService {
         }
         return entities;
     }
+
+    public Rate getRateById(final long id) {
+        return rateRepository.findById(id).orElseThrow();
+    }
 }
