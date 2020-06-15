@@ -42,10 +42,6 @@ public class SquadService {
     public void assignUser(Long squadId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         Squad squad = squadRepository.findById(squadId).orElseThrow();
-        Rate rate = new Rate();
-        rate.setFkUserId(userId);
-        rate.setFkSquadId(squadId);
-        rate.setRateValue(Rate.NO_RATE);
         squad.addUser(user);
         squadRepository.save(squad);
     }
