@@ -56,7 +56,7 @@ public class GameQueue {
 
     @Test
     @Transactional
-    void createNewQueue() throws Exception{
+    void createNewQueue(){
       gameQueueService.addPlayerToQueue(testUser.getLogin(),"Magicka");
       Assert.assertTrue(gameQueueService.findAllGameQueue().stream().filter(gameQueue -> gameQueue.getGameName().equals("Magicka")).findAny().isPresent());
         Assert.assertTrue(gameQueueService.findAllGameQueue().stream().filter(gameQueue -> gameQueue.getPlayersInQueue().stream().filter(user -> user.getLogin().equals(testUser.getLogin())).findAny().isPresent()).findAny().isPresent());
