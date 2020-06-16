@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface SquadRepository extends JpaRepository<Squad, Long> {
-
+    Optional<Squad> findByName(String name);
 }
