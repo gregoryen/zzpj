@@ -28,11 +28,15 @@ public class SquadService {
 
     public Squad createSquad(String name, String level, long gameId) {
         Game game = gameRepository.getByAppid(gameId);
-        Squad squad = Squad.builder()
-                .name(name)
-                .level(level)
-                .game(game)
-                .build();
+        Squad squad = new Squad();
+        squad.setLevel(level);
+        squad.setGame(game);
+        squad.setName(name);
+//        Squad squad = Squad.builder()
+//                .name(name)
+//                .level(level)
+//                .game(game)
+//                .build();
         return squadRepository.save(squad);
     }
 

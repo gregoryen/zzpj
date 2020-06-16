@@ -13,7 +13,8 @@ public class GameController {
 
     private GameService gameService;
 
-    public GameController(@Autowired GameService gameService) {
+    @Autowired
+    public GameController(GameService gameService) {
         this.gameService = gameService;
     }
 
@@ -26,8 +27,8 @@ public class GameController {
     // bo wtedy kazdy zalogowany moze podgladac innego w tych postach wystarcyz ze w param wpisze nie swoje dane
 
     @GetMapping("/user")
-    public List<Long> getUserGamesFromSteam(@RequestParam String steamId) throws IOException, ParseException {
+    public List<Long> getUserGamesFromSteam(@RequestParam Long steamId) throws IOException, ParseException {
         //return gameService.getUserGamesFromSteam(SecurityContextHolder.getContext().getAuthentication().getName());
-        return gameService.getUserGamesFromSteam(Long.parseLong(steamId));
+        return gameService.getUserGamesFromSteam(steamId);
     }
 }

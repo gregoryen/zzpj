@@ -4,10 +4,7 @@ import com.example.zzpj.game.Game;
 import com.example.zzpj.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,7 +12,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name="squad")
 public class Squad {
@@ -41,4 +39,5 @@ public class Squad {
         users.add(user);
         user.getSquads().add(this);
     }
+
 }
