@@ -98,8 +98,8 @@ static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRe
         Assert.assertEquals(user.getQueues().get(0).getGameName(),testGame.getName());
         Assert.assertEquals(user.getQueues().get(0).getPlayersInQueue().get(0).getLogin(),user.getLogin());
         Assert.assertEquals(400,wrongResult.getResponse().getStatus());
-        gameRepository.deleteAll();
-        gameQueueRepository.deleteAll();
+        gameRepository.delete(testGame);
+        gameQueueRepository.delete(gameQueueRepository.findByGameName(testGame.getName()).get());
 
     }
     @Test
@@ -120,7 +120,7 @@ static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRe
         Assert.assertEquals(200, goodResult.getResponse().getStatus());
         Assert.assertEquals(400, wrongResult.getResponse().getStatus());
         Assert.assertEquals(gameQueueRepository.findAll().size(), 0);
-        gameQueueRepository.deleteAll();
+        gameQueueRepository.deleteGameQueueByGameName(testGame.getName());
 
     }
 

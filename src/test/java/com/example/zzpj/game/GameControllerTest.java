@@ -54,17 +54,17 @@ class GameControllerTest {
 
     }
 
-    @Test
-    void    shouldImportGames() throws Exception {
-        String uri = "/games/import";
-        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).header("Authorization","Bearer "+jwtToken)
-                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-        int status = mvcResult.getResponse().getStatus();
-        Assert.assertEquals(200, status);
-        Assert.assertTrue(gameRepository.findAll().size() >= 97420);
-        gameRepository.deleteAll();
-
-    }
+//    @Test
+//    void    shouldImportGames() throws Exception {
+//        String uri = "/games/import";
+//        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(uri).header("Authorization","Bearer "+jwtToken)
+//                .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+//        int status = mvcResult.getResponse().getStatus();
+//        Assert.assertEquals(200, status);
+//        Assert.assertTrue(gameRepository.findAll().size() >= 97420);
+//        gameRepository.deleteAll();
+//
+//    }
     @Test
     void shouldReturnAllUserGames() throws Exception{
         String uri = "/games/user";

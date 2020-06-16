@@ -24,8 +24,8 @@ public class InitTestObjects {
         Game game = new Game();
         game.setUsers(new ArrayList<>());
         game.setSquads(new HashSet<>());
-        game.setAppid(730L);
-        game.setName("Counter-Strike: Global Offensive");
+        game.setAppid(73000000L);
+        game.setName("Counter-Strike: Global Offensive2");
         return game;
     }
 
