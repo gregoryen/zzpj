@@ -20,11 +20,8 @@ public class RateController {
     }
 
     @PutMapping(path = "/rate", consumes = "application/json")
-    public ResponseEntity<String> rateUser(@RequestBody Rate rate) {
-        String message = rateService.rateUser(rate);
-        return message.equals("")
-                ? new ResponseEntity<>(HttpStatus.OK)
-                : new ResponseEntity<>("{\"error\": \"" + message + "\"}", HttpStatus.UNPROCESSABLE_ENTITY);
+    public void rateUser(@RequestBody Rate rate) {
+        rateService.rateUser(rate);
     }
 
     @GetMapping(path = "/bySquadId")

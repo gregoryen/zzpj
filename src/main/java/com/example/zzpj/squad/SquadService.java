@@ -1,5 +1,6 @@
 package com.example.zzpj.squad;
 
+import com.example.zzpj.exception.ApiRequestException;
 import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
 import com.example.zzpj.ranking.Rate;
@@ -8,6 +9,7 @@ import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,20 +32,47 @@ public class SquadService {
     }
 
     public void createSquad(String name, String level, long gameId) {
-        Game game = gameRepository.getByAppid(gameId);
+        Game game = gameRepository.findByAppid(gameId)
+                .orElseThrow(() -> new ApiRequestException("Such game does not exist."));
+        squadRepository.findByName(name)
+                .ifPresent(s -> {
+                    throw new ApiRequestException("Squad with this name already exists.");
+                });
+        String owner = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
         Squad squad = Squad.builder()
+                .owner(owner)
                 .name(name)
                 .level(level)
                 .game(game)
+                .users(new ArrayList<User>())
                 .build();
+        squad.addUser(userRepository.getByLogin(owner));
         squadRepository.save(squad);
     }
 
     public void assignUser(Long squadId, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        Squad squad = squadRepository.findById(squadId).orElseThrow();
-        squad.addUser(user);
-        squadRepository.save(squad);
+        String name = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        Squad squad = squadRepository.findById(squadId)
+                .orElseThrow(() -> new ApiRequestException("Squad does not exist."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiRequestException("User to assign does not exist."));
+        if (squad.getUsers().contains(user))
+            throw new ApiRequestException("User is already assigned.");
+
+        if (userRepository.existsByLogin(name)) {
+            if (squad.getOwner().equals(name)) {
+                squad.addUser(user);
+                squadRepository.save(squad);
+            } else {
+                throw new ApiRequestException("You are not an owner of this squad, you can't assign user to it.");
+            }
+        }
     }
 
     public List<JSONObject> getAllSquads() {
@@ -67,12 +96,13 @@ public class SquadService {
 
     private List<JSONObject> parseSquadsToJSONObjects(List<Squad> squads) {
         List<JSONObject> entities = new ArrayList<>();
-        for (int i = 0; i < squads.size(); i++) {
+        for (Squad squad : squads) {
             JSONObject entity = new JSONObject();
-            entity.put("id: ", squads.get(i).getId());
-            entity.put("name: ", squads.get(i).getName());
-            entity.put("level: ", squads.get(i).getLevel());
-            entity.put("game: ", squads.get(i).getGame().getName());
+            entity.put("owner: ", squad.getOwner());
+            entity.put("id: ", squad.getId());
+            entity.put("name: ", squad.getName());
+            entity.put("level: ", squad.getLevel());
+            entity.put("game: ", squad.getGame().getName());
             entities.add(entity);
         }
         return entities;

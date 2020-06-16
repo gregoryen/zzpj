@@ -25,6 +25,9 @@ public class Squad {
     private Long id;
 
     @NotNull
+    private String owner;
+
+    @NotNull
     private String name;
 
     @NotNull

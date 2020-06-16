@@ -1,11 +1,13 @@
 package com.example.zzpj.ranking;
 
+import com.example.zzpj.exception.ApiRequestException;
 import com.example.zzpj.squad.Squad;
 import com.example.zzpj.squad.SquadRepository;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Entity;
@@ -29,7 +31,7 @@ public class RateService {
         this.squadRepository = squadRepository;
     }
 
-    public String rateUser(final Rate rate) {
+    public void rateUser(final Rate rate) {
         String validationMessage = validateInput(rate);
         if (validationMessage.equals("")) {
             Optional<Rate> optionalRate = rateRepository.findByFkUserIdAndFkSquadId(rate.getFkUserId(), rate.getFkSquadId());
@@ -38,8 +40,9 @@ public class RateService {
             } else {
                 rateRepository.save(rate);
             }
+        } else {
+            throw new ApiRequestException(validationMessage);
         }
-        return validationMessage;
     }
 
     private void updateValueOfRate(double rateValue, Rate rate) {
@@ -57,10 +60,24 @@ public class RateService {
             result += "User with provided id = " + rate.getFkUserId() + " doesn't exist;";
         if (!optionalSquad.isPresent())
             result += "Squad with provided id = " + rate.getFkSquadId() + " doesn't exist;";
+        else
+            result += validateIfLoggedUserBelongsToSquad(optionalSquad.get());
         if (optionalUser.isPresent() && optionalSquad.isPresent()) {
             result += validateIfUserBelongsToSquad(rate);
             result += validateRateValue(rate);
         }
+        return result;
+    }
+
+    private String validateIfLoggedUserBelongsToSquad(Squad squad) {
+        String result = "";
+        String name = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        if (!squad.getUsers()
+                .contains(userRepository.getByLogin(name)))
+            result += "You can't rate anyone, because you don't belong to the squad;";
         return result;
     }
 
