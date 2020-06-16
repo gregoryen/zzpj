@@ -13,7 +13,7 @@ public class InitTestObjects {
         User user = new User();
         user.setLogin("test1");
         user.setPassword("1234");
-        user.setSteamId(76561198253700224L);
+        user.setSteamId(76561198191481099L);
         user.setGames(new ArrayList<>());
         user.setQueues(new ArrayList<>());
         user.setSquads(new ArrayList<>());

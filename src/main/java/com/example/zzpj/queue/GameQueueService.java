@@ -110,8 +110,9 @@ public class GameQueueService {
     public void removeQueue(String gameName) throws GameQueueNotExistException{
         Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
         if(optionalGameQueue.isPresent()){
-            for(User user : optionalGameQueue.get().getPlayersInQueue()){
-                removePlayerFromQueue(user.getLogin(),gameName);
+            GameQueue  gameQueue = optionalGameQueue.get();
+            for(int i =0; i< gameQueue.getPlayersInQueue().size();i++){
+                removePlayerFromQueue(gameQueue.getPlayersInQueue().get(i).getLogin(),gameName);
             }
             gameQueueRepository.deleteGameQueueByGameName(gameName);
         }
