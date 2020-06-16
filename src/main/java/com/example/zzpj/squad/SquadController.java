@@ -1,14 +1,17 @@
 package com.example.zzpj.squad;
 
+import com.example.zzpj.game.GameService;
 import com.example.zzpj.security.UserService;
 
-import com.example.zzpj.service.GameService;
+
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("squad")

@@ -36,13 +36,11 @@ class GameServiceTest {
     static void setUp(@Autowired UserService userService, @Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
         testUser = InitTestObjects.initUser();
         userRepository.save(testUser);
-        testGame = InitTestObjects.initGame();
-        gameRepository.save(testGame);
+
     }
     @AfterAll
-    static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+    static void tearDown(@Autowired UserRepository userRepository){
         userRepository.delete(testUser);
-        gameRepository.delete(testGame);
     }
 
     @Test
