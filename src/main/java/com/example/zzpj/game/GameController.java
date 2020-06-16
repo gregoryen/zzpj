@@ -1,6 +1,6 @@
 package com.example.zzpj.game;
 
-import com.example.zzpj.service.GameService;
+import com.example.zzpj.steamApi.SteamApi;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +12,17 @@ import java.util.List;
 @RequestMapping("games")
 public class GameController {
 
-    private GameService gameService;
+    private SteamApi steamApi;
+    private GameRepository gameRepository;
 
-    public GameController(@Autowired GameService gameService) {
-        this.gameService = gameService;
+    public GameController(@Autowired SteamApi steamApi, @Autowired GameRepository gameRepository) {
+        this.steamApi = steamApi;
+        this.gameRepository = gameRepository;
     }
 
     @PutMapping("/import")
     public void importAllGames() throws IOException, ParseException {
-        gameService.importAllGamesFromSteam();
+        gameRepository.saveAll(steamApi.importAllGamesFromSteam());
     }
 
     //TODO nie wiem czy nie powinnismy robic jak w komentarzu ze te get i posty sa od tokenu zalezne
@@ -29,6 +31,6 @@ public class GameController {
     @GetMapping("/user")
     public List<Long> getUserGamesFromSteam(@RequestParam String steamId) throws IOException, ParseException {
         //return gameService.getUserGamesFromSteam(SecurityContextHolder.getContext().getAuthentication().getName());
-        return gameService.getUserGamesFromSteam(steamId);
+        return steamApi.getUserGamesFromSteam(steamId);
     }
 }

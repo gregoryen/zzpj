@@ -1,4 +1,4 @@
-package com.example.zzpj.service;
+package com.example.zzpj.stats;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

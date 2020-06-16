@@ -3,9 +3,8 @@ package com.example.zzpj;
 import com.example.zzpj.game.GameRepository;
 import com.example.zzpj.queue.GameQueueService;
 import com.example.zzpj.security.UserService;
-import com.example.zzpj.security.configuration.CustomUserDetailsService;
 import com.example.zzpj.security.jwt.JwtUtil;
-import com.example.zzpj.service.GameService;
+import com.example.zzpj.steamApi.SteamApi;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.UserSignUpPOJO;
@@ -16,18 +15,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 public class GameQueue {
     @Autowired
-    GameService gameService;
+    SteamApi steamApi;
     @Autowired
     GameRepository gameRepository;
     @Autowired

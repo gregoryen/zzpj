@@ -2,18 +2,15 @@ package com.example.zzpj;
 
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.jwt.JwtUtil;
-import com.example.zzpj.service.GameService;
+import com.example.zzpj.steamApi.Parser;
+import com.example.zzpj.steamApi.SteamApi;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.UserSignUpPOJO;
 import com.example.zzpj.users.UserTokenInformation;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,13 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.transaction.Transactional;
-import java.io.IOException;
-import java.util.List;
 
 
 @SpringBootTest
@@ -39,7 +30,8 @@ public class GameController {
     static String jwtToken;
     @Autowired UserRepository userRepository;
     @Autowired UserService userService;
-    @Autowired GameService gameService;
+    @Autowired SteamApi steamApi;
+    @Autowired Parser parser;
 
 
     @BeforeAll
@@ -72,11 +64,11 @@ public class GameController {
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(200, status);
-        Assert.assertEquals(gameService.parseGamesId(mvcResult.getResponse().getContentAsString()).size(),0);
+        Assert.assertEquals(parser.parseUserGames(mvcResult.getResponse().getContentAsString()).size(),0);
         //Jest >19 bo jakbym dokupil gre na swoim koncie test by sie wysypal a tak to przejdzie po dokupieniu nowej
         mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).header("Authorization","Bearer "+jwtToken).param("steamId",Long.toString(testUser.getSteamId()))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-        Assert.assertTrue(gameService.parseGamesId(mvcResult.getResponse().getContentAsString()).size()>19);
+        Assert.assertTrue(parser.parseUserGames(mvcResult.getResponse().getContentAsString()).size()>19);
     }
     @AfterAll
     static void cleanAfterTest(@Autowired UserRepository userRepository){

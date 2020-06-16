@@ -1,11 +1,9 @@
 package com.example.zzpj.squad;
 
-import com.example.zzpj.game.GameController;
 import com.example.zzpj.security.UserService;
-import com.example.zzpj.service.GameService;
+import com.example.zzpj.steamApi.SteamApi;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +15,13 @@ public class SquadController {
 
     AuthenticationManager authenticationManager;
     SquadService squadService;
-    GameService gameService;
+    SteamApi steamApi;
     UserService userService;
 
     @Autowired
-    public SquadController(SquadService squadService, GameService gameService, UserService userService) {
+    public SquadController(SquadService squadService, SteamApi steamApi, UserService userService) {
         this.squadService = squadService;
-        this.gameService = gameService;
+        this.steamApi = steamApi;
         this.userService = userService;
     }
 

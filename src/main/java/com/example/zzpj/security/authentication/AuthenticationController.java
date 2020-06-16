@@ -1,13 +1,13 @@
 package com.example.zzpj.security.authentication;
 
 
+import com.example.zzpj.game.Game;
+import com.example.zzpj.game.GameRepository;
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.jwt.JwtResponse;
 import com.example.zzpj.security.jwt.JwtUtil;
-import com.example.zzpj.service.GameService;
-import com.example.zzpj.users.UserSignInPOJO;
-import com.example.zzpj.users.UserSignUpPOJO;
-import com.example.zzpj.users.UserTokenInformation;
+import com.example.zzpj.steamApi.SteamApi;
+import com.example.zzpj.users.*;
 import com.example.zzpj.users.exceptions.BadUserCredentialsException;
 import com.example.zzpj.users.exceptions.UserDisabledException;
 import com.example.zzpj.users.exceptions.UserException;
@@ -21,22 +21,29 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 
 public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
     private UserService userService;
-    private GameService gameService;
+    private SteamApi steamApi;
+    private UserRepository userRepository;
+    private GameRepository gameRepository;
 
     private JwtUtil jwtUtil;
 
     @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, GameService gameService, UserService userService, JwtUtil jwtUtil) {
+    public AuthenticationController(AuthenticationManager authenticationManager, SteamApi steamApi, UserService userService, JwtUtil jwtUtil,UserRepository userRepository, GameRepository gameRepository) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-        this.gameService = gameService;
+        this.steamApi = steamApi;
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
+        this.gameRepository = gameRepository;
     }
 
     @PostMapping(path = "signUp", consumes = "application/json")
@@ -81,10 +88,27 @@ public class AuthenticationController {
     private boolean createUserAccount(UserSignUpPOJO accountDetails) {
         try {
             userService.registerNewUserAccount(accountDetails);
-            gameService.insertUserGamesToDb(Long.toString(accountDetails.getSteamId()));
+            insertUserGamesToDb(Long.toString(accountDetails.getSteamId()));
             return true;
         } catch (UserException ue) {
             return false;
+        }
+        catch(Exception e){
+            return false;
+        }
+    }
+
+    private boolean insertUserGamesToDb(String steamId){
+        try {
+            List<Long> userGames = steamApi.getUserGamesFromSteam(steamId);
+            User user = userRepository.getBySteamId(Long.parseLong(steamId));
+            user.setGames(new ArrayList<>());
+            for(Long id : userGames){
+                Game game =gameRepository.getByAppid(id);
+                user.getGames().add(game);
+            }
+            userRepository.save(user);
+            return true;
         }
         catch(Exception e){
             return false;
