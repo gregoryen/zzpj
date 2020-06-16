@@ -56,7 +56,7 @@ class GameQueueControllerTest {
         UserSignUpPOJO accountDetails = new UserSignUpPOJO();
         accountDetails.setPassword("1234");
         accountDetails.setLogin("test1");
-        accountDetails.setSteamId(76561198191481099L);
+        accountDetails.setSteamId(76561198253700224L);
         testUser = userService.registerNewUserAccount(accountDetails);
         UserTokenInformation uti = userService.getUserDetailsForToken(testUser.getLogin());
         jwtToken = jwtUtil.generateToken(uti,"none");
@@ -83,9 +83,13 @@ static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRe
     @SneakyThrows
     void addPlayerToQueue() {
         String uri = "/queue/addPlayer";
-        MvcResult goodResult = mvc.perform(MockMvcRequestBuilders.post(uri).header("Authorization","Bearer "+jwtToken).param("login",testUser.getLogin()).param("gameName",testGame.getName())
+        MvcResult goodResult = mvc.perform(MockMvcRequestBuilders.post(uri).header("Authorization","Bearer "+jwtToken)
+                .param("login",testUser.getLogin())
+                .param("gameName",testGame.getName())
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-        MvcResult wrongResult = mvc.perform(MockMvcRequestBuilders.post(uri).header("Authorization","Bearer "+jwtToken).param("login","wrongLogin").param("gameName",testGame.getName())
+        MvcResult wrongResult = mvc.perform(MockMvcRequestBuilders.post(uri).header("Authorization","Bearer "+jwtToken)
+                .param("login","wrongLogin")
+                .param("gameName",testGame.getName())
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         int status = goodResult.getResponse().getStatus();
         User user = userRepository.getByLogin(testUser.getLogin());
@@ -104,9 +108,13 @@ static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRe
     void removePlayerFromQueue() {
         String uri = "/queue/removePlayer";
         gameQueueService.addPlayerToQueue(testUser.getLogin(),testGame.getName());
-        MvcResult goodResult = mvc.perform(MockMvcRequestBuilders.delete(uri).header("Authorization","Bearer "+jwtToken).param("login",testUser.getLogin()).param("gameName",testGame.getName())
+        MvcResult goodResult = mvc.perform(MockMvcRequestBuilders.delete(uri).header("Authorization","Bearer "+jwtToken)
+                .param("login",testUser.getLogin())
+                .param("gameName",testGame.getName())
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
-        MvcResult wrongResult = mvc.perform(MockMvcRequestBuilders.delete(uri).header("Authorization","Bearer "+jwtToken).param("login","wrongLogin").param("gameName",testGame.getName())
+        MvcResult wrongResult = mvc.perform(MockMvcRequestBuilders.delete(uri).header("Authorization","Bearer "+jwtToken)
+                .param("login","wrongLogin")
+                .param("gameName",testGame.getName())
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         User user = userRepository.getByLogin(testUser.getLogin());
         Assert.assertEquals(200, goodResult.getResponse().getStatus());
@@ -118,9 +126,3 @@ static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRe
 
 
 }
-
-//
-//    @DeleteMapping("/removePlayer")
-//    public void removePlayerFormQueue(@RequestParam String login, @RequestParam String gameName){
-//        gameQueueService.removePlayerFromQueue(login, gameName);
-//    }
