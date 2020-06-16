@@ -2,8 +2,7 @@ package com.example.zzpj.stats;
 
 import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
-import com.example.zzpj.game.GameService;
-import com.example.zzpj.service.GameStats;
+import com.example.zzpj.steam_api.SteamApi;
 import com.example.zzpj.squad.SquadRepository;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
@@ -26,7 +25,7 @@ class UserStatsServiceTest {
 
     UserStatsService userStatsService;
 
-    GameService gameService;
+    SteamApi steamApi;
     GameRepository gameRepository;
     UserRepository userRepository;
     SquadRepository squadRepository;
@@ -39,7 +38,7 @@ class UserStatsServiceTest {
 
     @BeforeEach
     void setUp() {
-        gameService = mock(GameService.class);
+        steamApi = mock(SteamApi.class);
         gameRepository = mock(GameRepository.class);
         userRepository = mock(UserRepository.class);
         squadRepository = mock(SquadRepository.class);
@@ -65,7 +64,7 @@ class UserStatsServiceTest {
     void shouldThrowExceptionWhenUserDontExists(){
         //given
         when(userRepository.findByLogin(any())).thenReturn(null);
-        userStatsService = new UserStatsService(gameService, gameRepository, userRepository, squadRepository);
+        userStatsService = new UserStatsService(steamApi, gameRepository, userRepository, squadRepository);
 
         //then
         assertThrows(NullPointerException.class, () -> userStatsService.getUserStats("bad_login"));
@@ -79,10 +78,10 @@ class UserStatsServiceTest {
         Game game1 = new Game(0,"cs:go ",null,null);
         Game game2 = new Game(2,"StarCraft",null,null);
         when(userRepository.findByLogin(any())).thenReturn(java.util.Optional.ofNullable(user));
-        when(gameService.getUserGameStats(123)).thenReturn(gameStats);
+        when(steamApi.getUserGameStats(123)).thenReturn(gameStats);
         when(gameRepository.getByAppid(0L)).thenReturn(game1);
         when(gameRepository.getByAppid(2L)).thenReturn(game2);
-        userStatsService = new UserStatsService(gameService, gameRepository, userRepository, squadRepository);
+        userStatsService = new UserStatsService(steamApi, gameRepository, userRepository, squadRepository);
         //when
         UserStats gameStats = userStatsService.getUserStats("login");
         //then

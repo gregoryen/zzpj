@@ -1,5 +1,6 @@
 package com.example.zzpj.game;
 
+import com.example.zzpj.steam_api.SteamApi;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,24 +12,24 @@ import java.util.List;
 @RequestMapping("games")
 public class GameController {
 
-    private GameService gameService;
+    private SteamApi steamApi;
 
     @Autowired
-    public GameController(GameService gameService) {
-        this.gameService = gameService;
+    public GameController(SteamApi steamApi) {
+        this.steamApi = steamApi;
     }
 
     @PutMapping("/import")
     public void importAllGames() throws IOException, ParseException {
-        gameService.importAllGamesFromSteam();
+        steamApi.importAllGamesFromSteam();
     }
 
     //TODO nie wiem czy nie powinnismy robic jak w komentarzu ze te get i posty sa od tokenu zalezne
     // bo wtedy kazdy zalogowany moze podgladac innego w tych postach wystarcyz ze w param wpisze nie swoje dane
 
     @GetMapping("/user")
-    public List<Long> getUserGamesFromSteam(@RequestParam Long steamId) throws IOException, ParseException {
+    public List<Long> getUserGamesFromSteam(@RequestParam long steamId) throws IOException, ParseException {
         //return gameService.getUserGamesFromSteam(SecurityContextHolder.getContext().getAuthentication().getName());
-        return gameService.getUserGamesFromSteam(steamId);
+        return steamApi.getUserGamesFromSteam(steamId);
     }
 }

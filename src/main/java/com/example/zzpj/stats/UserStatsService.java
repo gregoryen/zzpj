@@ -1,8 +1,7 @@
 package com.example.zzpj.stats;
 
 import com.example.zzpj.game.GameRepository;
-import com.example.zzpj.game.GameService;
-import com.example.zzpj.service.GameStats;
+import com.example.zzpj.steam_api.SteamApi;
 import com.example.zzpj.squad.SquadRepository;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
@@ -16,13 +15,13 @@ import java.util.List;
 
 @Service("userStatsService")
 public class UserStatsService {
-    GameService gameService;
+    SteamApi steamApi;
     GameRepository gameRepository;
     UserRepository userRepository;
     SquadRepository squadRepository;
 
-    public UserStatsService(@Autowired GameService gameService, @Autowired GameRepository gameRepository, @Autowired UserRepository userRepository, @Autowired SquadRepository squadRepository) {
-        this.gameService = gameService;
+    public UserStatsService(@Autowired SteamApi steamApi, @Autowired GameRepository gameRepository, @Autowired UserRepository userRepository, @Autowired SquadRepository squadRepository) {
+        this.steamApi = steamApi;
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.squadRepository = squadRepository;
@@ -30,7 +29,7 @@ public class UserStatsService {
 
     public UserStats getUserStats(String login) throws IOException, ParseException {
         User user = userRepository.findByLogin(login).orElseThrow();
-        List<GameStats> gameStats = gameService.getUserGameStats(user.getSteamId());
+        List<GameStats> gameStats = steamApi.getUserGameStats(user.getSteamId());
 
         int games = gameStats.size();
         long playtime = gameStats.stream().mapToLong(GameStats::getPlaytimeForever).sum();

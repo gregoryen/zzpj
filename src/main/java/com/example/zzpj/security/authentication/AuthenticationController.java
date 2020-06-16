@@ -4,7 +4,7 @@ package com.example.zzpj.security.authentication;
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.jwt.JwtResponse;
 import com.example.zzpj.security.jwt.JwtUtil;
-import com.example.zzpj.game.GameService;
+import com.example.zzpj.steam_api.SteamApi;
 import com.example.zzpj.users.UserSignInPOJO;
 import com.example.zzpj.users.UserSignUpPOJO;
 import com.example.zzpj.users.UserTokenInformation;
@@ -27,15 +27,15 @@ public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
     private UserService userService;
-    private GameService gameService;
+    private SteamApi steamApi;
 
     private JwtUtil jwtUtil;
 
     @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, GameService gameService, UserService userService, JwtUtil jwtUtil) {
+    public AuthenticationController(AuthenticationManager authenticationManager, SteamApi steamApi, UserService userService, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-        this.gameService = gameService;
+        this.steamApi = steamApi;
         this.jwtUtil = jwtUtil;
     }
 
@@ -81,7 +81,7 @@ public class AuthenticationController {
     private boolean createUserAccount(UserSignUpPOJO accountDetails) {
         try {
             userService.registerNewUserAccount(accountDetails);
-            gameService.insertUserGamesToDb(accountDetails.getSteamId());
+            userService.insertUserGamesToDb(accountDetails.getSteamId());
             return true;
         } catch (UserException ue) {
             return false;
