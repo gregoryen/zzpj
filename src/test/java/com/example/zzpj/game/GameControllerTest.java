@@ -2,6 +2,7 @@ package com.example.zzpj.game;
 
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.jwt.JwtUtil;
+import com.example.zzpj.steam_api.SteamApi;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.UserSignUpPOJO;
@@ -21,7 +22,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class GameControllerTest {
 
@@ -32,7 +32,8 @@ class GameControllerTest {
     UserRepository userRepository;
     @Autowired
     UserService userService;
-    @Autowired GameService gameService;
+    @Autowired
+    SteamApi steamApi;
     @Autowired GameRepository gameRepository;
 
 
