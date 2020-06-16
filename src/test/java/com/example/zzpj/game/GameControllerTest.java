@@ -39,8 +39,8 @@ class GameControllerTest {
     @BeforeAll
     static void setUp(@Autowired UserService userService, @Autowired JwtUtil jwtUtil, @Autowired WebApplicationContext webApplicationContext){
         UserSignUpPOJO accountDetails = new UserSignUpPOJO();
-        accountDetails.setPassword("testtest12345678910");
-        accountDetails.setLogin("testtest12345678910");
+        accountDetails.setPassword("1234");
+        accountDetails.setLogin("test1");
         accountDetails.setSteamId(76561198191481099L);
         testUser = userService.registerNewUserAccount(accountDetails);
         UserTokenInformation uti = userService.getUserDetailsForToken(testUser.getLogin());
@@ -49,7 +49,7 @@ class GameControllerTest {
     }
     @AfterAll
     static void tearDown(@Autowired UserRepository userRepository){
-        userRepository.delete(userRepository.getByLogin("testtest12345678910"));
+        userRepository.delete(testUser);
     }
 
     @Test
@@ -74,7 +74,7 @@ class GameControllerTest {
         mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).header("Authorization","Bearer "+jwtToken).param("steamId",Long.toString(testUser.getSteamId()))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         System.out.println(Arrays.asList(mvcResult.getResponse().getContentAsString().replace("[","").replace("]","").split(",")).size());
-        Assert.assertTrue(Arrays.asList(mvcResult.getResponse().getContentAsString().replace("[","").replace("]","").split(",")).size()>=209);
+        Assert.assertTrue(Arrays.asList(mvcResult.getResponse().getContentAsString().replace("[","").replace("]","").split(",")).size()>=30);
 
     }
 

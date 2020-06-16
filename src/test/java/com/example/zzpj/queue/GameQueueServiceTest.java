@@ -1,5 +1,6 @@
 package com.example.zzpj.queue;
 
+import com.example.zzpj.InitTestObjects;
 import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
 import com.example.zzpj.queue.exception.GameNotFoundInUserCollectionException;
@@ -25,6 +26,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -44,61 +46,42 @@ class GameQueueServiceTest {
     GameQueueService gameQueueService;
     @Autowired
     GameQueueRepository gameQueueRepository;
-
     static User testUser;
+    static Game testGame;
     static User testUser2;
-    static String jwtToken;
-    static String gameName = "Counter-Strike: Global Offensive";
-    static Game game;
     @BeforeAll
-    static void setUp(@Autowired UserService userService, @Autowired JwtUtil jwtUtil, @Autowired GameService gameService) {
-        game = new Game();
-        game.setAppid(730L);
-        game.setName(gameName);
-        game.setSquads(new HashSet<>());
-        game.setUsers(new ArrayList<>());
-        UserSignUpPOJO accountDetails = new UserSignUpPOJO();
-        accountDetails.setPassword("testtest12345678910");
-        accountDetails.setLogin("testtest12345678910");
-        accountDetails.setSteamId(76561198036881526L);
-        testUser = userService.registerNewUserAccount(accountDetails);
+    static void setUp(@Autowired UserService userService, @Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+        testUser = InitTestObjects.initUser();
+        testUser2 = InitTestObjects.initUser();
+        testUser2.setLogin("test2");
+        testUser2.setSteamId(76561198191481099L);
+        userRepository.save(testUser2);
+        userRepository.save(testUser);
+        testGame = InitTestObjects.initGame();
+        testUser.getGames().add(testGame);
+        testUser2.getGames().add(testGame);
+        gameRepository.save(testGame);
+        userRepository.saveAll(Arrays.asList(testUser,testUser2));
 
-        accountDetails.setLogin("testtest123456789102");
-        accountDetails.setSteamId(76561198191481099L);
-        testUser2 = userService.registerNewUserAccount(accountDetails);
-        UserTokenInformation uti = userService.getUserDetailsForToken(testUser.getLogin());
-        jwtToken = jwtUtil.generateToken(uti, "none");
     }
     @AfterAll
-    static void tearDown(@Autowired UserRepository userRepository) {
-        userRepository.delete(userRepository.getByLogin("testtest12345678910"));
-        userRepository.delete(userRepository.getByLogin("testtest123456789102"));
+    static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+        testUser.getGames().remove(testGame);
+        testUser2.getGames().remove(testGame);
+        testGame.getUsers().removeAll(Arrays.asList(testUser,testUser2));
+        gameRepository.save(testGame);
+        userRepository.saveAll(Arrays.asList(testUser,testUser2));
+        userRepository.delete(testUser2);
+        userRepository.delete(testUser);
+        gameRepository.delete(testGame);
     }
     @Test
     @Transactional
     @SneakyThrows
     void shouldAddPlayerToQueue() {
-//                                //given
-//                                User user = User.builder().login("login").steamId(123).password("password").build();
-//                                Game game1 = new Game(0,"cs:go ",null,null);
-//                                Game game2 = new Game(2,"StarCraft",null,null);
-//                                when(userRepository.findByLogin(any())).thenReturn(java.util.Optional.ofNullable(user));
-//                                when(gameService.getUserGameStats(123)).thenReturn(gameStats);
-//                                when(gameRepository.getByAppid(0L)).thenReturn(game1);
-//                                when(gameRepository.getByAppid(2L)).thenReturn(game2);
-//                                userStatsService = new UserStatsService(gameService, gameRepository, userRepository, squadRepository);
-//                                //when
-//                                UserStats gameStats = userStatsService.getUserStats("login");
-//                                //then
-//                                assertEquals(gameStats.getGames(), 3);
-//                                assertEquals(gameStats.getLogin(), "login");
-//                                assertEquals(gameStats.getMostPlayedGame(), game2.getName());
-//                                assertEquals(gameStats.getMostPlayedGame2Weeks(), game1.getName());
-//                                assertEquals(gameStats.getPlaytime(), 750);
-//                                assertEquals(gameStats.getPlaytime2Weeks(), 211);
-            gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
+            gameQueueService.addPlayerToQueue(testUser.getLogin(), testGame.getName());
             Assert.assertThrows(UserAlreadyInQueueException.class, () -> {
-                gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
+                gameQueueService.addPlayerToQueue(testUser.getLogin(), testGame.getName());
             });
             Assert.assertThrows(GameNotFoundInUserCollectionException.class, () -> {
                 gameQueueService.addPlayerToQueue(testUser2.getLogin(), "Atari: 80 Classic Games in One!");
@@ -106,36 +89,38 @@ class GameQueueServiceTest {
             Assert.assertThrows(UsernameNotFoundException.class, () -> {
                 gameQueueService.addPlayerToQueue("notExistingName", "Atari: 80 Classic Games in One!");
             });
-            gameQueueService.addPlayerToQueue(testUser2.getLogin(), gameName);
-            Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
+            gameQueueService.addPlayerToQueue(testUser2.getLogin(), testGame.getName());
+            Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(testGame.getName());
             Assert.assertEquals(optionalGameQueue.get().getPlayersInQueue().size(), 2);
-            gameQueueService.removeQueue(gameName);
+            gameQueueService.removeQueue(testGame.getName());
     }
     @Test
     @Transactional
     @SneakyThrows
     void shouldRemovePlayerFromQueue(){
-            gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
-            gameQueueService.addPlayerToQueue(testUser2.getLogin(), gameName);
-            Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
+            gameQueueService.addPlayerToQueue(testUser.getLogin(), testGame.getName());
+            gameQueueService.addPlayerToQueue(testUser2.getLogin(), testGame.getName());
+            Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(testGame.getName());
             Assert.assertEquals(optionalGameQueue.get().getPlayersInQueue().size(), 2);
-            gameQueueService.removePlayerFromQueue(testUser2.getLogin(), gameName);
+
+            gameQueueService.removePlayerFromQueue(testUser2.getLogin(), testGame.getName());
             Assert.assertEquals(optionalGameQueue.get().getPlayersInQueue().size(), 1);
             Assert.assertEquals(optionalGameQueue.get().getPlayersInQueue().get(0).getLogin(), testUser.getLogin());
-            gameQueueService.removePlayerFromQueue(testUser2.getLogin(), gameName);
-            gameQueueService.removeQueue(gameName);
-            Assert.assertTrue(gameQueueRepository.findByGameName(gameName).isEmpty());
+
+            gameQueueService.removePlayerFromQueue(testUser2.getLogin(), testGame.getName());
+            gameQueueService.removeQueue(testGame.getName());
+            Assert.assertTrue(gameQueueRepository.findByGameName(testGame.getName()).isEmpty());
     }
     @Test
     @Transactional
     @SneakyThrows
     void shouldRemoveQueue(){
-        gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
-        Assert.assertNotNull(gameQueueService.findGameQueue(gameName));
-        gameQueueService.removeQueue(gameName);
-        Assert.assertNull(gameQueueService.findGameQueue(gameName));
+        gameQueueService.addPlayerToQueue(testUser.getLogin(), testGame.getName());
+        Assert.assertNotNull(gameQueueService.findGameQueue(testGame.getName()));
+        gameQueueService.removeQueue(testGame.getName());
+        Assert.assertNull(gameQueueService.findGameQueue(testGame.getName()));
         Assert.assertThrows(GameQueueNotExistException.class, ()->{
-            gameQueueService.removeQueue(gameName);
+            gameQueueService.removeQueue(testGame.getName());
         });
     }
 }

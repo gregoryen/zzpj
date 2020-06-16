@@ -1,5 +1,6 @@
 package com.example.zzpj.squad;
 
+import com.example.zzpj.InitTestObjects;
 import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
 import com.example.zzpj.game.GameService;
@@ -16,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
@@ -35,30 +39,30 @@ class SquadServiceTest {
     @Autowired
     SquadRepository squadRepository;
     static User testUser;
-    static Game game;
+    static Game testGame;
+    static UserSignUpPOJO accountDetails;
     @BeforeAll
-    static void setUp(@Autowired UserService userService, @Autowired GameRepository gameRepository) {
-        UserSignUpPOJO accountDetails = new UserSignUpPOJO();
-        accountDetails.setPassword("testtest12345678910");
-        accountDetails.setLogin("testtest12345678910");
-        accountDetails.setSteamId(76561198036881526L);
-        testUser = userService.registerNewUserAccount(accountDetails);
-        game = gameRepository.getByAppid(730L);
+    static void setUp(@Autowired UserService userService, @Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+        testUser = InitTestObjects.initUser();
+        userRepository.save(testUser);
+        testGame = InitTestObjects.initGame();
+        gameRepository.save(testGame);
     }
 
     @AfterAll
-    static void tearDown(@Autowired UserRepository userRepository) {
+    static void tearDown(@Autowired UserRepository userRepository,@Autowired GameRepository gameRepository) {
         userRepository.delete(testUser);
+        gameRepository.delete(testGame);
     }
 
     @Test
     void shouldCreateAndRemoveSquad() {
-       Squad squad1 = squadService.createSquad("1","1",game.getAppid());
-       Squad squad2 = squadService.createSquad("2","2",game.getAppid());
-        Assert.assertEquals(squadRepository.getAllByGame(game).size(),2);
+       Squad squad1 = squadService.createSquad("1","1",testGame.getAppid());
+       Squad squad2 = squadService.createSquad("2","2",testGame.getAppid());
+        Assert.assertEquals(squadRepository.getAllByGame(testGame).size(),2);
         squadService.removeSquad(squad1.getId());
         squadService.removeSquad(squad2.getId());
-        Assert.assertEquals(squadRepository.getAllByGame(game).size(),0);
+        Assert.assertEquals(squadRepository.getAllByGame(testGame).size(),0);
         Assert.assertThrows(SquadNotExistException.class, ()->{
             squadService.removeSquad(squad1.getId()+1);
         });
@@ -66,7 +70,7 @@ class SquadServiceTest {
     @Test
     @Transactional
     void assignUser() {
-        Squad squad1 = squadService.createSquad("1","1",game.getAppid());
+        Squad squad1 = squadService.createSquad("1","1",testGame.getAppid());
         squadService.assignUser(squad1.getId(), testUser.getId());
         squadRepository.save(squad1);
         squad1 = squadRepository.getOne(squad1.getId());

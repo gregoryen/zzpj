@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,11 +45,16 @@ class RateServiceTest {
     RateRepository rateRepository;
     @Autowired
     SquadRepository squadRepository;
+    static String gameName = "Counter-Strike: Global Offensive";
     static User testUser;
     static Game game;
     @BeforeAll
     static void setUp(@Autowired UserService userService, @Autowired GameRepository gameRepository) {
-
+        game = new Game();
+        game.setName(gameName);
+        game.setAppid(730L);
+        game.setSquads(new HashSet<>());
+        game.setUsers(new ArrayList<>());
         UserSignUpPOJO accountDetails = new UserSignUpPOJO();
         accountDetails.setPassword("testtest12345678910");
         accountDetails.setLogin("testtest12345678910");
@@ -63,7 +65,7 @@ class RateServiceTest {
 
     @AfterAll
     static void tearDown(@Autowired UserRepository userRepository) {
-        userRepository.delete(userRepository.getByLogin("testtest12345678910"));
+        userRepository.delete(testUser);
     }
     @Transactional
     @Test

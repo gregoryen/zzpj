@@ -1,5 +1,6 @@
 package com.example.zzpj.game;
 
+import com.example.zzpj.InitTestObjects;
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.configuration.CustomUserDetailsService;
 import com.example.zzpj.users.User;
@@ -29,18 +30,19 @@ class GameServiceTest {
     @Autowired
     CustomUserDetailsService customUserDetailsService;
     static User testUser;
+    static Game testGame;
     static UserSignUpPOJO accountDetails;
     @BeforeAll
-    static void setUp(@Autowired UserService userService){
-        accountDetails = new UserSignUpPOJO();
-        accountDetails.setPassword("testtest12345678910");
-        accountDetails.setLogin("testtest12345678910");
-        accountDetails.setSteamId(76561198036881526L);
-        testUser = userService.registerNewUserAccount(accountDetails);
+    static void setUp(@Autowired UserService userService, @Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+        testUser = InitTestObjects.initUser();
+        userRepository.save(testUser);
+        testGame = InitTestObjects.initGame();
+        gameRepository.save(testGame);
     }
     @AfterAll
-    static void tearDown(@Autowired UserRepository userRepository){
-        userRepository.delete(userRepository.getByLogin("testtest12345678910"));
+    static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+        userRepository.delete(testUser);
+        gameRepository.delete(testGame);
     }
 
     @Test
@@ -52,9 +54,9 @@ class GameServiceTest {
     @Test
     void shouldReturnUserGames() throws Exception{
         List<Long> gameList = gameService.getUserGamesFromSteam(testUser.getSteamId());
-        Assert.assertTrue(gameList.size() > 19);
+        Assert.assertTrue(gameList.size() >= 30);
         Assert.assertTrue(gameList.stream().filter(aLong -> aLong.equals(730L)).findAny().isPresent());
-        Assert.assertTrue(gameList.stream().filter(aLong-> aLong.equals(205790L)).findAny().isPresent());
+        Assert.assertTrue(gameList.stream().filter(aLong-> aLong.equals(8190L)).findAny().isPresent());
         Assert.assertThrows(Exception.class,()->{
             gameService.getUserGamesFromSteam(-1L);
         });
@@ -62,13 +64,11 @@ class GameServiceTest {
     @Test
     @Transactional
     void shouldInsertUserGamesToDb() {
-        User user = userRepository.getBySteamId(testUser.getSteamId());
-        user.getGames().removeAll(user.getGames());
-        userRepository.save(user);
-        user = userRepository.getBySteamId(testUser.getSteamId());
-        Assert.assertEquals(user.getGames().size(), 0);
+        testUser.getGames().removeAll(testUser.getGames());
+        userRepository.save(testUser);
+        Assert.assertEquals(testUser.getGames().size(), 0);
         gameService.insertUserGamesToDb(testUser.getSteamId());
-        user = userRepository.getBySteamId(testUser.getSteamId());
-        Assert.assertTrue(user.getGames().size() > 19);
+        testUser = userRepository.getBySteamId(testUser.getSteamId());
+        Assert.assertTrue(testUser.getGames().size() >= 30);
     }
 }
