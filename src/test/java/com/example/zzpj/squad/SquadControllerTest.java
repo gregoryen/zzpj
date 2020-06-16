@@ -119,7 +119,7 @@ class SquadControllerTest {
         MvcResult goodResult = mvc.perform(MockMvcRequestBuilders.post(uri).header("Authorization","Bearer "+jwtToken)
                 .param("name","1")
                 .param("level","1")
-                .param("gameId","730").header("Content-Type","application/json")
+                .param("gameId","73000000").header("Content-Type","application/json")
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
         MvcResult wrongResult = mvc.perform(MockMvcRequestBuilders.post(uri).header("Authorization","Bearer "+jwtToken)
                 .param("name","1")
@@ -133,14 +133,14 @@ class SquadControllerTest {
 
         userRepository.getByLogin(testUser.getLogin()).getSquads().removeAll(squadRepository.findAll());
         userRepository.save(userRepository.getByLogin(testUser.getLogin()));
-        squadRepository.deleteAll();
+        squadRepository.deleteAll(squadRepository.getAllByGame(testGame));
     }
     @Test
     @Transactional
     @SneakyThrows
     void assignUser() {
         String uri = "/squad/assign";
-        squadService.createSquad("1","1",730L,testUser.getLogin());
+        squadService.createSquad("1","1",73000000L,testUser.getLogin());
         Squad squad = squadRepository.findAll().get(0);
         MvcResult goodResult = mvc.perform(MockMvcRequestBuilders.put(uri).header("Authorization","Bearer "+jwtToken)
                 .param("squadId",squad.getId().toString())

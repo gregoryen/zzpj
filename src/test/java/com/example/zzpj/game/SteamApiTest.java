@@ -43,11 +43,11 @@ class SteamApiTest {
         userRepository.delete(testUser);
     }
 
-    @Test
-    void shouldImportAllGames() throws Exception{
-        Assert.assertTrue(steamApi.importAllGamesFromSteam().size() >= 97420);
-        gameRepository.deleteAll();
-    }
+//    @Test
+//    void shouldImportAllGames() throws Exception{
+//        Assert.assertTrue(steamApi.importAllGamesFromSteam().size() >= 97420);
+//        gameRepository.deleteAll();
+//    }
     @Test
     void shouldReturnUserGames() throws Exception{
         List<Long> gameList = steamApi.getUserGamesFromSteam(testUser.getSteamId());
