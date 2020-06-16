@@ -14,9 +14,13 @@ public class GameController {
 
     private SteamApi steamApi;
     private GameRepository gameRepository;
+
+
     @Autowired
     public GameController(SteamApi steamApi, GameRepository gameRepository) {
-        this.steamApi = steamApi;this.gameRepository = gameRepository;
+        this.steamApi = steamApi;
+        this.gameRepository = gameRepository;
+
     }
 
     @PutMapping("/import")
