@@ -20,19 +20,19 @@ public class Parser {
         JSONObject applist = (JSONObject) jobj.get("response");
 
         JSONArray apps = (JSONArray) applist.get("games");
-
-        for (Object app : apps) {
-            JSONObject gameJson = (JSONObject) app;
-            long appid = (long) gameJson.get("appid");
-            long playtimeForever = (long) gameJson.get("playtime_forever");
-            long playtimeWindows = (long) gameJson.get("playtime_windows_forever");
-            long playtimeMac = (long) gameJson.get("playtime_mac_forever");
-            long playtimeLinux = (long) gameJson.get("playtime_linux_forever");
-            Object playtime = gameJson.get("playtime_2weeks");
-            long playtime2Weeks = playtime == null ? 0 : (long) playtime;
-            games.add(new GameStats(appid, playtime2Weeks, playtimeForever, playtimeWindows, playtimeMac, playtimeLinux));
+        if(apps != null) {
+            for (Object app : apps) {
+                JSONObject gameJson = (JSONObject) app;
+                long appid = (long) gameJson.get("appid");
+                long playtimeForever = (long) gameJson.get("playtime_forever");
+                long playtimeWindows = (long) gameJson.get("playtime_windows_forever");
+                long playtimeMac = (long) gameJson.get("playtime_mac_forever");
+                long playtimeLinux = (long) gameJson.get("playtime_linux_forever");
+                Object playtime = gameJson.get("playtime_2weeks");
+                long playtime2Weeks = playtime == null ? 0 : (long) playtime;
+                games.add(new GameStats(appid, playtime2Weeks, playtimeForever, playtimeWindows, playtimeMac, playtimeLinux));
+            }
         }
-
         return games;
     }
 

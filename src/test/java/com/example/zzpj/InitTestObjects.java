@@ -1,6 +1,7 @@
 package com.example.zzpj;
 
 import com.example.zzpj.game.Game;
+import com.example.zzpj.squad.Squad;
 import com.example.zzpj.users.User;
 
 import java.util.ArrayList;

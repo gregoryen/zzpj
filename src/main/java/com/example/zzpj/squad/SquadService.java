@@ -43,17 +43,14 @@ public class SquadService {
     }
 
 
-    public void createSquad(String name, String level, long gameId) {
+    public void createSquad(String name, String level, long gameId, String login) {
         Game game = gameRepository.findByAppid(gameId)
                 .orElseThrow(() -> new ApiRequestException("Such game does not exist."));
         squadRepository.findByName(name)
                 .ifPresent(s -> {
                     throw new ApiRequestException("Squad with this name already exists.");
                 });
-        String owner = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+        String owner = login;
         Squad squad = Squad.builder()
                 .owner(owner)
                 .name(name)
@@ -62,14 +59,12 @@ public class SquadService {
                 .users(new ArrayList<User>())
                 .build();
         squad.addUser(userRepository.getByLogin(owner));
+        System.out.println(squad.getId());
         squadRepository.save(squad);
     }
 
-    public void assignUser(Long squadId, Long userId) {
-        String name = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+    public void assignUser(Long squadId, Long userId, String ownerLogin) {
+
         Squad squad = squadRepository.findById(squadId)
                 .orElseThrow(() -> new ApiRequestException("Squad does not exist."));
         User user = userRepository.findById(userId)
@@ -77,8 +72,8 @@ public class SquadService {
         if (squad.getUsers().contains(user))
             throw new ApiRequestException("User is already assigned.");
 
-        if (userRepository.existsByLogin(name)) {
-            if (squad.getOwner().equals(name)) {
+        if (userRepository.existsByLogin(ownerLogin)) {
+            if (squad.getOwner().equals(ownerLogin)) {
                 squad.addUser(user);
                 squadRepository.save(squad);
             } else {
@@ -121,9 +116,17 @@ public class SquadService {
 
     }
     public void removeSquad(long squadId){
-
-        if(squadRepository.getOneById(squadId).isPresent())
-        squadRepository.deleteById(squadId);
+    Optional<Squad> optionalSquad= squadRepository.findById(squadId);
+        if(optionalSquad.isPresent()) {
+            Squad squad = optionalSquad.get();
+            for(User user : squad.getUsers()){
+                user.getSquads().remove(squad);
+                userRepository.save(user);
+            }
+            squad.setUsers(new ArrayList<>());
+            squadRepository.save(squad);
+            squadRepository.deleteById(squadId);
+        }
         else
             throw new SquadNotExistException("Squad with " + squadId + " id not exist");
     }

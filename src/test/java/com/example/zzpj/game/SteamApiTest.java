@@ -45,8 +45,7 @@ class SteamApiTest {
 
     @Test
     void shouldImportAllGames() throws Exception{
-        steamApi.importAllGamesFromSteam();
-        Assert.assertTrue(gameRepository.findAll().size() >= 97420);
+        Assert.assertTrue(steamApi.importAllGamesFromSteam().size() >= 97420);
         gameRepository.deleteAll();
     }
     @Test
