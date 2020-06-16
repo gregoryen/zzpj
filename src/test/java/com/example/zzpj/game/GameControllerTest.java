@@ -51,6 +51,7 @@ class GameControllerTest {
     @AfterAll
     static void tearDown(@Autowired UserRepository userRepository){
         userRepository.delete(testUser);
+
     }
 
     @Test

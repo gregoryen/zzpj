@@ -36,19 +36,16 @@ class SteamApiTest {
     static void setUp(@Autowired UserService userService, @Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
         testUser = InitTestObjects.initUser();
         userRepository.save(testUser);
-        testGame = InitTestObjects.initGame();
-        gameRepository.save(testGame);
+
     }
     @AfterAll
-    static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+    static void tearDown(@Autowired UserRepository userRepository){
         userRepository.delete(testUser);
-        gameRepository.delete(testGame);
     }
 
     @Test
     void shouldImportAllGames() throws Exception{
-        steamApi.importAllGamesFromSteam();
-        Assert.assertTrue(gameRepository.findAll().size() >= 97420);
+        Assert.assertTrue(steamApi.importAllGamesFromSteam().size() >= 97420);
         gameRepository.deleteAll();
     }
     @Test

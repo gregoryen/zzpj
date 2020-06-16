@@ -47,24 +47,23 @@ class GameQueueServiceTest {
         testUser2 = InitTestObjects.initUser();
         testUser2.setLogin("test2");
         testUser2.setSteamId(76561198191481099L);
-        userRepository.save(testUser2);
-        userRepository.save(testUser);
         testGame = InitTestObjects.initGame();
+
         testUser.getGames().add(testGame);
         testUser2.getGames().add(testGame);
+        testGame.getUsers().addAll(Arrays.asList(testUser,testUser2));
         gameRepository.save(testGame);
         userRepository.saveAll(Arrays.asList(testUser,testUser2));
 
     }
     @AfterAll
     static void tearDown(@Autowired UserRepository userRepository, @Autowired GameRepository gameRepository){
+        testGame.getUsers().removeAll(Arrays.asList(testUser,testUser2));
         testUser.getGames().remove(testGame);
         testUser2.getGames().remove(testGame);
-        testGame.getUsers().removeAll(Arrays.asList(testUser,testUser2));
-        gameRepository.save(testGame);
         userRepository.saveAll(Arrays.asList(testUser,testUser2));
-        userRepository.delete(testUser2);
         userRepository.delete(testUser);
+        userRepository.delete(testUser2);
         gameRepository.delete(testGame);
     }
     @Test
