@@ -8,6 +8,8 @@ import com.example.zzpj.queue.exception.UserAlreadyInQueueException;
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.jwt.JwtUtil;
 import com.example.zzpj.game.GameService;
+import com.example.zzpj.stats.UserStats;
+import com.example.zzpj.stats.UserStatsService;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.UserSignUpPOJO;
@@ -25,6 +27,11 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest
 class GameQueueServiceTest {
     @Autowired
@@ -71,7 +78,24 @@ class GameQueueServiceTest {
     @Transactional
     @SneakyThrows
     void shouldAddPlayerToQueue() {
-
+//                                //given
+//                                User user = User.builder().login("login").steamId(123).password("password").build();
+//                                Game game1 = new Game(0,"cs:go ",null,null);
+//                                Game game2 = new Game(2,"StarCraft",null,null);
+//                                when(userRepository.findByLogin(any())).thenReturn(java.util.Optional.ofNullable(user));
+//                                when(gameService.getUserGameStats(123)).thenReturn(gameStats);
+//                                when(gameRepository.getByAppid(0L)).thenReturn(game1);
+//                                when(gameRepository.getByAppid(2L)).thenReturn(game2);
+//                                userStatsService = new UserStatsService(gameService, gameRepository, userRepository, squadRepository);
+//                                //when
+//                                UserStats gameStats = userStatsService.getUserStats("login");
+//                                //then
+//                                assertEquals(gameStats.getGames(), 3);
+//                                assertEquals(gameStats.getLogin(), "login");
+//                                assertEquals(gameStats.getMostPlayedGame(), game2.getName());
+//                                assertEquals(gameStats.getMostPlayedGame2Weeks(), game1.getName());
+//                                assertEquals(gameStats.getPlaytime(), 750);
+//                                assertEquals(gameStats.getPlaytime2Weeks(), 211);
             gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
             Assert.assertThrows(UserAlreadyInQueueException.class, () -> {
                 gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);

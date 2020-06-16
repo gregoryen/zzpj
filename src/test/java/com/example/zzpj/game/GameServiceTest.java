@@ -47,6 +47,7 @@ class GameServiceTest {
     void shouldImportAllGames() throws Exception{
         gameService.importAllGamesFromSteam();
         Assert.assertTrue(gameRepository.findAll().size() >= 97420);
+        gameRepository.deleteAll();
     }
     @Test
     void shouldReturnUserGames() throws Exception{

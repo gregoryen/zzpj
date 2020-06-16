@@ -41,7 +41,7 @@ class GameControllerTest {
         UserSignUpPOJO accountDetails = new UserSignUpPOJO();
         accountDetails.setPassword("testtest12345678910");
         accountDetails.setLogin("testtest12345678910");
-        accountDetails.setSteamId(76561198036881526L);
+        accountDetails.setSteamId(76561198191481099L);
         testUser = userService.registerNewUserAccount(accountDetails);
         UserTokenInformation uti = userService.getUserDetailsForToken(testUser.getLogin());
         jwtToken = jwtUtil.generateToken(uti,"none");
@@ -60,6 +60,7 @@ class GameControllerTest {
         int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(200, status);
         Assert.assertTrue(gameRepository.findAll().size() >= 97420);
+        gameRepository.deleteAll();
 
     }
     @Test
@@ -72,7 +73,9 @@ class GameControllerTest {
         Assert.assertEquals(mvcResult.getResponse().getContentAsString(),"[]");
         mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri).header("Authorization","Bearer "+jwtToken).param("steamId",Long.toString(testUser.getSteamId()))
                 .accept(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        System.out.println(Arrays.asList(mvcResult.getResponse().getContentAsString().replace("[","").replace("]","").split(",")).size());
         Assert.assertTrue(Arrays.asList(mvcResult.getResponse().getContentAsString().replace("[","").replace("]","").split(",")).size()>=209);
+
     }
 
 }
