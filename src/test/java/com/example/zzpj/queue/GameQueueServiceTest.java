@@ -1,5 +1,6 @@
 package com.example.zzpj.queue;
 
+import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
 import com.example.zzpj.queue.exception.GameNotFoundInUserCollectionException;
 import com.example.zzpj.queue.exception.GameQueueNotExistException;
@@ -21,6 +22,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 @SpringBootTest
 class GameQueueServiceTest {
@@ -39,10 +42,14 @@ class GameQueueServiceTest {
     static User testUser2;
     static String jwtToken;
     static String gameName = "Counter-Strike: Global Offensive";
-
+    static Game game;
     @BeforeAll
     static void setUp(@Autowired UserService userService, @Autowired JwtUtil jwtUtil, @Autowired GameService gameService) {
-
+        game = new Game();
+        game.setAppid(730L);
+        game.setName(gameName);
+        game.setSquads(new HashSet<>());
+        game.setUsers(new ArrayList<>());
         UserSignUpPOJO accountDetails = new UserSignUpPOJO();
         accountDetails.setPassword("testtest12345678910");
         accountDetails.setLogin("testtest12345678910");
