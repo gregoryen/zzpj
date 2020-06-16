@@ -72,4 +72,14 @@ public class SquadController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping(path = "/all/{userId}")
+    public List<Squad> getAllSquadsForUser(@PathVariable long userId) {
+        return squadService.getAllSquadsForUser(userId);
+    }
+
+    @GetMapping(path = "/squadInfo/{squadId}")
+    public Squad getSquadInfo(@PathVariable long squadId) {
+        return squadService.getSquadInfoBySquadId(squadId);
+    }
 }
