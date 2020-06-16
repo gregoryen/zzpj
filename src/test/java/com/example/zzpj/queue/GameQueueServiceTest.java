@@ -64,7 +64,7 @@ class GameQueueServiceTest {
     @Transactional
     @SneakyThrows
     void shouldAddPlayerToQueue() {
-        try {
+
             gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
             Assert.assertThrows(UserAlreadyInQueueException.class, () -> {
                 gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
@@ -79,16 +79,11 @@ class GameQueueServiceTest {
             Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
             Assert.assertEquals(optionalGameQueue.get().getPlayersInQueue().size(), 2);
             gameQueueService.removeQueue(gameName);
-        }
-        catch(Exception e){
-
-        }
     }
     @Test
     @Transactional
     @SneakyThrows
     void shouldRemovePlayerFromQueue(){
-        try {
             gameQueueService.addPlayerToQueue(testUser.getLogin(), gameName);
             gameQueueService.addPlayerToQueue(testUser2.getLogin(), gameName);
             Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
@@ -99,11 +94,7 @@ class GameQueueServiceTest {
             gameQueueService.removePlayerFromQueue(testUser2.getLogin(), gameName);
             gameQueueService.removeQueue(gameName);
             Assert.assertTrue(gameQueueRepository.findByGameName(gameName).isEmpty());
-        }catch(Exception e){
-
-        }
     }
-    //
     @Test
     @Transactional
     @SneakyThrows
