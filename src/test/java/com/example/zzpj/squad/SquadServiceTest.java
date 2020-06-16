@@ -41,7 +41,7 @@ class SquadServiceTest {
         UserSignUpPOJO accountDetails = new UserSignUpPOJO();
         accountDetails.setPassword("testtest12345678910");
         accountDetails.setLogin("testtest12345678910");
-        accountDetails.setSteamId(76561198105857198L);
+        accountDetails.setSteamId(76561198036881526L);
         testUser = userService.registerNewUserAccount(accountDetails);
         game = gameRepository.getByAppid(730L);
     }
