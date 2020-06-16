@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface GameRepository extends JpaRepository<Game, Long> {
     Game getByAppid(Long appId);
+
     List<Game> findAll();
     Optional<Game> findByAppid(Long appId);
 }

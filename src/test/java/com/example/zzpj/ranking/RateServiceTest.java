@@ -1,5 +1,4 @@
 package com.example.zzpj.ranking;
-
 import com.example.zzpj.squad.SquadRepository;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;

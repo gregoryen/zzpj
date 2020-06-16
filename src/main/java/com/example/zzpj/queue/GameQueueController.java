@@ -22,7 +22,12 @@ public class GameQueueController {
 
     @PostMapping("/addPlayer")
     public void addPlayerToQueue(@RequestParam String login, @RequestParam String gameName){
-        gameQueueService.addPlayerToQueue(login, gameName);
+        try {
+            gameQueueService.addPlayerToQueue(login, gameName);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @DeleteMapping("/removePlayer")

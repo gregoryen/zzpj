@@ -3,17 +3,28 @@ package com.example.zzpj.squad;
 import com.example.zzpj.exception.ApiRequestException;
 import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
+
+import com.example.zzpj.squad.exceptions.SquadNotExistException;
+
 import com.example.zzpj.ranking.Rate;
 import com.example.zzpj.ranking.RateRepository;
+
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+
+import org.springframework.cache.support.NullValue;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+
 import java.util.List;
+
 import java.util.Optional;
 
 @Service("squadService")
@@ -30,6 +41,7 @@ public class SquadService {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
     }
+
 
     public void createSquad(String name, String level, long gameId) {
         Game game = gameRepository.findByAppid(gameId)
@@ -106,5 +118,13 @@ public class SquadService {
             entities.add(entity);
         }
         return entities;
+
+    }
+    public void removeSquad(long squadId){
+
+        if(squadRepository.getOneById(squadId).isPresent())
+        squadRepository.deleteById(squadId);
+        else
+            throw new SquadNotExistException("Squad with " + squadId + " id not exist");
     }
 }

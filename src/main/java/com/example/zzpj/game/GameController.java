@@ -1,6 +1,5 @@
 package com.example.zzpj.game;
 
-import com.example.zzpj.service.GameService;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,8 @@ public class GameController {
 
     private GameService gameService;
 
-    public GameController(@Autowired GameService gameService) {
+    @Autowired
+    public GameController(GameService gameService) {
         this.gameService = gameService;
     }
 
@@ -27,7 +27,7 @@ public class GameController {
     // bo wtedy kazdy zalogowany moze podgladac innego w tych postach wystarcyz ze w param wpisze nie swoje dane
 
     @GetMapping("/user")
-    public List<Long> getUserGamesFromSteam(@RequestParam String steamId) throws IOException, ParseException {
+    public List<Long> getUserGamesFromSteam(@RequestParam Long steamId) throws IOException, ParseException {
         //return gameService.getUserGamesFromSteam(SecurityContextHolder.getContext().getAuthentication().getName());
         return gameService.getUserGamesFromSteam(steamId);
     }

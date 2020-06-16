@@ -2,9 +2,7 @@ package com.example.zzpj.game;
 
 import com.example.zzpj.squad.Squad;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.example.zzpj.users.User;
 import org.hibernate.annotations.Cascade;
 
@@ -13,7 +11,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

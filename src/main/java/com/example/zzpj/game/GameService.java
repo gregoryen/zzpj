@@ -1,7 +1,8 @@
-package com.example.zzpj.service;
+package com.example.zzpj.game;
 
 import com.example.zzpj.game.Game;
 import com.example.zzpj.game.GameRepository;
+import com.example.zzpj.service.GameStats;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import org.json.simple.JSONArray;
@@ -42,7 +43,7 @@ public class GameService {
         this.saveAllGames(games);
     }
 
-    public List<Long> getUserGamesFromSteam(String steamId) throws IOException, ParseException {
+    public List<Long> getUserGamesFromSteam(Long steamId) throws IOException, ParseException {
         String url = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key="+ STEAM_KEY +"&steamid="+ steamId +"/&format=json";
         String response = this.getResponse(url);
 
@@ -56,10 +57,10 @@ public class GameService {
         return this.parseUserGames(response);
     }
 
-    public boolean insertUserGamesToDb(String steamId){
+    public boolean insertUserGamesToDb(Long steamId){
         try {
             List<Long> userGames = getUserGamesFromSteam(steamId);
-            User user = userRepository.getBySteamId(Long.parseLong(steamId));
+            User user = userRepository.getBySteamId(steamId);
             user.setGames(new ArrayList<>());
             for(Long id : userGames){
                 Game game =gameRepository.getByAppid(id);
