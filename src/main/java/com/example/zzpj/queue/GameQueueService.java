@@ -93,13 +93,12 @@ public class GameQueueService {
                 } else {
                     gameQueueRepository.save(queue);
                 }
-
-
             }
+            else
+                throw new UsernameNotFoundException("Username "+ login + " not found");
         }
-
-
-
+        else
+            throw new UsernameNotFoundException("Username "+ login + " not found");
     }
 
     public void createQueue(String gameName){
