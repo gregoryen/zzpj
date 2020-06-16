@@ -3,6 +3,7 @@ package com.example.zzpj.game;
 import com.example.zzpj.InitTestObjects;
 import com.example.zzpj.security.UserService;
 import com.example.zzpj.security.configuration.CustomUserDetailsService;
+import com.example.zzpj.steam_api.SteamApi;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.UserSignUpPOJO;
@@ -16,11 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.transaction.Transactional;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-class GameServiceTest {
+class SteamApiTest {
     @Autowired
-    GameService gameService;
+    SteamApi steamApi;
     @Autowired
     UserService userService;
     @Autowired
@@ -47,18 +47,18 @@ class GameServiceTest {
 
     @Test
     void shouldImportAllGames() throws Exception{
-        gameService.importAllGamesFromSteam();
+        steamApi.importAllGamesFromSteam();
         Assert.assertTrue(gameRepository.findAll().size() >= 97420);
         gameRepository.deleteAll();
     }
     @Test
     void shouldReturnUserGames() throws Exception{
-        List<Long> gameList = gameService.getUserGamesFromSteam(testUser.getSteamId());
+        List<Long> gameList = steamApi.getUserGamesFromSteam(testUser.getSteamId());
         Assert.assertTrue(gameList.size() >= 30);
         Assert.assertTrue(gameList.stream().filter(aLong -> aLong.equals(730L)).findAny().isPresent());
         Assert.assertTrue(gameList.stream().filter(aLong-> aLong.equals(8190L)).findAny().isPresent());
         Assert.assertThrows(Exception.class,()->{
-            gameService.getUserGamesFromSteam(-1L);
+            steamApi.getUserGamesFromSteam(-1L);
         });
     }
     @Test
@@ -67,7 +67,7 @@ class GameServiceTest {
         testUser.getGames().removeAll(testUser.getGames());
         userRepository.save(testUser);
         Assert.assertEquals(testUser.getGames().size(), 0);
-        gameService.insertUserGamesToDb(testUser.getSteamId());
+        userService.insertUserGamesToDb(testUser.getSteamId());
         testUser = userRepository.getBySteamId(testUser.getSteamId());
         Assert.assertTrue(testUser.getGames().size() >= 30);
     }

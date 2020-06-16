@@ -7,14 +7,9 @@ import com.example.zzpj.queue.exception.GameNotFoundInUserCollectionException;
 import com.example.zzpj.queue.exception.GameQueueNotExistException;
 import com.example.zzpj.queue.exception.UserAlreadyInQueueException;
 import com.example.zzpj.security.UserService;
-import com.example.zzpj.security.jwt.JwtUtil;
-import com.example.zzpj.game.GameService;
-import com.example.zzpj.stats.UserStats;
-import com.example.zzpj.stats.UserStatsService;
+import com.example.zzpj.steam_api.SteamApi;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
-import com.example.zzpj.users.UserSignUpPOJO;
-import com.example.zzpj.users.UserTokenInformation;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
@@ -25,19 +20,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class GameQueueServiceTest {
     @Autowired
-    GameService gameService;
+    SteamApi steamApi;
     @Autowired
     GameRepository gameRepository;
     @Autowired
