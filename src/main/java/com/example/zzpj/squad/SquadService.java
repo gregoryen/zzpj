@@ -23,9 +23,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service("squadService")
 public class SquadService {
@@ -115,6 +119,7 @@ public class SquadService {
         return entities;
 
     }
+
     public void removeSquad(long squadId){
     Optional<Squad> optionalSquad= squadRepository.findById(squadId);
         if(optionalSquad.isPresent()) {
@@ -131,8 +136,23 @@ public class SquadService {
             throw new SquadNotExistException("Squad with " + squadId + " id not exist");
     }
 
-    public Squad getSquadByName(String squadName) {
-        return squadRepository.findByName(squadName).orElse(null);
+
+    public List<Squad> getAllSquadsForUser(long userId) {
+        List<Squad> squads = squadRepository.findAll();
+        List<Squad> result = new ArrayList<>();
+        for (Squad s : squads) {
+            List<User> users = s.getUsers();
+            boolean isPresent = users.stream()
+                    .anyMatch(u -> u.getId() == userId);
+            if (isPresent)
+                result.add(s);
+        }
+        return result;
+    }
+
+    public Squad getSquadInfoBySquadId(long squadId) {
+        return squadRepository.findById(squadId)
+                .orElseThrow(() -> new ApiRequestException("Squad does not exist."));
     }
 
 }

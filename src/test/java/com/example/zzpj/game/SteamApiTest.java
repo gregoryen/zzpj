@@ -43,17 +43,17 @@ class SteamApiTest {
         userRepository.delete(testUser);
     }
 
-    @Test
-    void shouldImportAllGames() throws Exception{
-        Assert.assertTrue(steamApi.importAllGamesFromSteam().size() >= 97420);
-        gameRepository.deleteAll();
-    }
+//    @Test
+//    void shouldImportAllGames() throws Exception{
+//        Assert.assertTrue(steamApi.importAllGamesFromSteam().size() >= 97420);
+//        gameRepository.deleteAll();
+//    }
     @Test
     void shouldReturnUserGames() throws Exception{
         List<Long> gameList = steamApi.getUserGamesFromSteam(testUser.getSteamId());
         Assert.assertTrue(gameList.size() >= 30);
         Assert.assertTrue(gameList.stream().filter(aLong -> aLong.equals(730L)).findAny().isPresent());
-        Assert.assertTrue(gameList.stream().filter(aLong-> aLong.equals(8190L)).findAny().isPresent());
+        Assert.assertTrue(gameList.stream().filter(aLong-> aLong.equals(400L)).findAny().isPresent());
         Assert.assertThrows(Exception.class,()->{
             steamApi.getUserGamesFromSteam(-1L);
         });

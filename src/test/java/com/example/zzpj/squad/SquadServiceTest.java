@@ -46,7 +46,7 @@ class SquadServiceTest {
         userRepository.save(testUser);
         testUser2 = InitTestObjects.initUser();
         testUser2.setLogin("test2");
-        testUser2.setSteamId(76561198191481099L);
+        testUser2.setSteamId(76561198253700224L);
         userRepository.save(testUser2);
         testGame = InitTestObjects.initGame();
         gameRepository.save(testGame);
