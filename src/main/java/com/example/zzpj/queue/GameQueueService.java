@@ -180,7 +180,9 @@ public class GameQueueService {
             }
         }
 
-        queue.setPlayersInQueue(users2);
+        if (!rates.isEmpty()){
+            queue.setPlayersInQueue(users2);
+        }
 
          return queue;
     }

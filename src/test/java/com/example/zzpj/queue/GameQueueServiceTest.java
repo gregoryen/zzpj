@@ -109,11 +109,11 @@ class GameQueueServiceTest {
         gameQueueService.addPlayerToQueue(testUser.getLogin(), testGame.getName());
         Assert.assertNotNull(gameQueueService.findGameQueue(testGame.getName()));
         gameQueueService.removeQueue(testGame.getName());
-//        Assert.assertThrows(GameQueueNotExistException.class, ()->{
-//            gameQueueService.findGameQueue(testGame.getName());
-//        });
-//        Assert.assertThrows(GameQueueNotExistException.class, ()->{
-//            gameQueueService.removeQueue(testGame.getName());
-//        });
+        Assert.assertThrows(GameQueueNotExistException.class, ()->{
+            gameQueueService.findGameQueue(testGame.getName());
+        });
+        Assert.assertThrows(GameQueueNotExistException.class, ()->{
+            gameQueueService.removeQueue(testGame.getName());
+        });
     }
 }
