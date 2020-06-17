@@ -2,6 +2,7 @@ package com.example.zzpj.squad;
 
 import com.example.zzpj.game.Game;
 import com.example.zzpj.users.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
@@ -32,12 +33,17 @@ public class Squad {
     @NotNull
     private String level;
 
-    @JsonManagedReference
+
+
+    @JsonBackReference
+
     @ManyToOne
     @JoinColumn(name="game_id", nullable=false)
     private Game game;
 
-    @JsonManagedReference
+
+    @JsonBackReference
+
     @ManyToMany(mappedBy = "squads")
     private List<User> users;
 

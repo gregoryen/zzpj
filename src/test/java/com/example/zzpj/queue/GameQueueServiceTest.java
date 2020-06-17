@@ -46,7 +46,7 @@ class GameQueueServiceTest {
         testUser = InitTestObjects.initUser();
         testUser2 = InitTestObjects.initUser();
         testUser2.setLogin("test2");
-        testUser2.setSteamId(76561198191481099L);
+        testUser2.setSteamId(76561198253700224L);
         testGame = InitTestObjects.initGame();
 
         testUser.getGames().add(testGame);
