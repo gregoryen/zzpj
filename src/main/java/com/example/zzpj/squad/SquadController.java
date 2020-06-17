@@ -48,9 +48,6 @@ public class SquadController {
         return squadService.getUsersBySquadId(squadId);
     }
 
-    @GetMapping(path = "/getByName")
-    public @ResponseBody Squad getSquadByName(String name ) {
-        return squadService.getSquadByName(name);
-    }
+
 
 }
