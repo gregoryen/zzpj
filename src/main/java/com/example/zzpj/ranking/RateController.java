@@ -31,4 +31,10 @@ public class RateController {
                 ? new ResponseEntity<>(rates, HttpStatus.OK)
                 : new ResponseEntity<>(rates, HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping(path="/getUserRate")
+    public @ResponseBody double getUserRate(@RequestParam String login) {
+        return rateService.generateOverAllRateValueForUser(login);
+    }
+
 }

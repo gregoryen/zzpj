@@ -9,11 +9,13 @@ import com.example.zzpj.queue.exception.UserAlreadyInQueueException;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.exceptions.UserException;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +24,7 @@ public class GameQueueService {
 
     GameQueueRepository gameQueueRepository;
     UserRepository userRepository;
+
 
     @Autowired
     public GameQueueService(GameQueueRepository gameQueueRepository, UserRepository userRepository) {
@@ -58,13 +61,29 @@ public class GameQueueService {
 
     }
 
-    public List<GameQueue> findAllGameQueue(){
-        return gameQueueRepository.findAll();
+    public List<JSONObject> findAllGameQueue() throws GameQueueNotExistException{
+        List<GameQueue> listOfQueues = gameQueueRepository.findAll();
+        if (!listOfQueues.isEmpty()) {
+            List<JSONObject> jsonQueues = new ArrayList<>();
+            for (GameQueue queue : listOfQueues) {
+                jsonQueues.add(parseQueueToJsonObject(queue));
+            }
+            return jsonQueues;
+        } else {
+            throw new GameQueueNotExistException("There is no queues available");
+        }
+
     }
 
-    public GameQueue findGameQueue(String gameName){
+    public JSONObject findGameQueue(String gameName) throws GameQueueNotExistException{
         Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
-        return optionalGameQueue.orElse(null);
+        JSONObject jsonQueue;
+        if(optionalGameQueue.isPresent()){
+            jsonQueue = parseQueueToJsonObject(optionalGameQueue.get());
+            return jsonQueue;
+        } else {
+            throw new GameQueueNotExistException("Queue for this game doesn't exist");
+        }
     }
 
 
@@ -124,7 +143,26 @@ public class GameQueueService {
         Optional<User> optionalUser = userRepository.findByLogin(login);
 
         return optionalUser.orElse(null);
+    }
 
+    private JSONObject parseQueueToJsonObject(GameQueue queue){
+
+        List<JSONObject> playersList = new ArrayList<>();
+
+        for (User user : queue.getPlayersInQueue()) {
+            JSONObject entity = new JSONObject();
+            entity.put("id", user.getId());
+            entity.put("login", user.getLogin());
+            entity.put("steamId", user.getSteamId());
+            playersList.add(entity);
+        }
+
+        JSONObject object = new JSONObject();
+        object.put("id", queue.getId());
+        object.put("gameName", queue.getGameName());
+        object.put("playersInQueue", playersList);
+
+        return object;
     }
 
 

@@ -130,4 +130,9 @@ public class SquadService {
         else
             throw new SquadNotExistException("Squad with " + squadId + " id not exist");
     }
+
+    public Squad getSquadByName(String squadName) {
+        return squadRepository.findByName(squadName).orElse(null);
+    }
+
 }
