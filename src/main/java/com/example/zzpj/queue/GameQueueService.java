@@ -171,17 +171,25 @@ public class GameQueueService {
                 .collect(Collectors.toList());
 
         List<User> users2 = new ArrayList<>();
+        List<User> users3 = new ArrayList<>();
 
         for (Rate r : sorted) {
             for (User user : users) {
                 if(user.getId() == r.getFkUserId()) {
                     users2.add(user);
+                    users3.add(user);
                 }
             }
         }
 
+        for (User u : users) {
+            if (!users2.contains(u)){
+                users3.add(u);
+            }
+        }
+
         if (!rates.isEmpty()){
-            queue.setPlayersInQueue(users2);
+            queue.setPlayersInQueue(users3);
         }
 
          return queue;
