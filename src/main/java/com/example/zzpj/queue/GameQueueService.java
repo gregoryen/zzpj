@@ -91,6 +91,7 @@ public class GameQueueService {
             return jsonQueue;
         } else {
             throw new GameQueueNotExistException("Queue for this game doesn't exist");
+            //return null;
         }
     }
 
