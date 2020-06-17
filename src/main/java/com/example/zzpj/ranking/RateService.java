@@ -123,22 +123,4 @@ public class RateService {
         return rateRepository.findById(id).orElseThrow();
     }
 
-    public double generateOverAllRateValueForUser(String userLogin){
-         Optional<User> optionalUser = Optional.ofNullable(userRepository.getByLogin(userLogin));
-         double rates = -1;
-         if(optionalUser.isPresent()) {
-
-             List<Optional<Rate>> optionalList = rateRepository.findAllByFkUserId(optionalUser.get().getId());
-
-              rates = optionalList.stream()
-                     .filter(Optional::isPresent)
-                     .map(Optional::get)
-                     .mapToDouble(Rate::getRateValue)
-                     .average().getAsDouble();
-         }
-
-        return  rates;
-    }
-
-
 }
