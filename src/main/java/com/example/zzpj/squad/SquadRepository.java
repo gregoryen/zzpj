@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface SquadRepository extends JpaRepository<Squad, Long> {
 
-        List<Squad> getAllByGame(Game game);
-      Optional<Squad> getOneById(long squadId);
+    List<Squad> getAllByGame(Game game);
+    Optional<Squad> getOneById(long squadId);
     Optional<Squad> findByName(String name);
 }

@@ -4,6 +4,7 @@ import com.example.zzpj.game.Game;
 import com.example.zzpj.users.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -33,12 +34,16 @@ public class Squad {
     private String level;
 
 
+
     @JsonBackReference
+
     @ManyToOne
     @JoinColumn(name="game_id", nullable=false)
     private Game game;
 
+
     @JsonBackReference
+
     @ManyToMany(mappedBy = "squads")
     private List<User> users;
 

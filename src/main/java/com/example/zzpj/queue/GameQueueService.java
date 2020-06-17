@@ -6,27 +6,38 @@ import com.example.zzpj.queue.exception.GameNotFoundInUserCollectionException;
 import com.example.zzpj.queue.exception.GameQueueException;
 import com.example.zzpj.queue.exception.GameQueueNotExistException;
 import com.example.zzpj.queue.exception.UserAlreadyInQueueException;
+import com.example.zzpj.ranking.Rate;
+import com.example.zzpj.ranking.RateRepository;
 import com.example.zzpj.users.User;
 import com.example.zzpj.users.UserRepository;
 import com.example.zzpj.users.exceptions.UserException;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service("gameQueueService")
 public class GameQueueService {
 
     GameQueueRepository gameQueueRepository;
     UserRepository userRepository;
+    RateRepository rateRepository;
+
 
     @Autowired
-    public GameQueueService(GameQueueRepository gameQueueRepository, UserRepository userRepository) {
+    public GameQueueService(GameQueueRepository gameQueueRepository,
+                            UserRepository userRepository,
+                            RateRepository rateRepository) {
         this.gameQueueRepository = gameQueueRepository;
         this.userRepository = userRepository;
+        this.rateRepository = rateRepository;
     }
 
     public void addPlayerToQueue(String login, String gameName) throws GameNotFoundInUserCollectionException, UsernameNotFoundException, UserAlreadyInQueueException{
@@ -58,13 +69,30 @@ public class GameQueueService {
 
     }
 
-    public List<GameQueue> findAllGameQueue(){
-        return gameQueueRepository.findAll();
+    public List<JSONObject> findAllGameQueue() throws GameQueueNotExistException{
+        List<GameQueue> listOfQueues = gameQueueRepository.findAll();
+        if (!listOfQueues.isEmpty()) {
+            List<JSONObject> jsonQueues = new ArrayList<>();
+            for (GameQueue queue : listOfQueues) {
+                jsonQueues.add(parseQueueToJsonObject(sortUsersByRating(queue)));
+            }
+            return jsonQueues;
+        } else {
+            throw new GameQueueNotExistException("There is no queues available");
+        }
+
     }
 
-    public GameQueue findGameQueue(String gameName){
+    public JSONObject findGameQueue(String gameName) throws GameQueueNotExistException{
         Optional<GameQueue> optionalGameQueue = gameQueueRepository.findByGameName(gameName);
-        return optionalGameQueue.orElse(null);
+        JSONObject jsonQueue;
+        if(optionalGameQueue.isPresent()){
+            jsonQueue = parseQueueToJsonObject(sortUsersByRating(optionalGameQueue.get()));
+            return jsonQueue;
+        } else {
+            throw new GameQueueNotExistException("Queue for this game doesn't exist");
+            //return null;
+        }
     }
 
 
@@ -125,10 +153,75 @@ public class GameQueueService {
         Optional<User> optionalUser = userRepository.findByLogin(login);
 
         return optionalUser.orElse(null);
-
     }
 
+    private GameQueue sortUsersByRating(GameQueue queue) {
+        List<User> users = queue.getPlayersInQueue();
+        List<Rate> rates = new ArrayList<>();
 
+        for (User user : users) {
+            Optional<Rate> optionalRate = rateRepository.findByFkUserId(user.getId());
+            optionalRate.ifPresent(rates::add);
+        }
 
+        List<Rate> sorted = rates.stream()
+                .sorted(Comparator
+                        .comparing(Rate::getRateValue)
+                        .reversed())
+                .collect(Collectors.toList());
+
+        List<User> users2 = new ArrayList<>();
+
+        for (Rate r : sorted) {
+            for (User user : users) {
+                if(user.getId() == r.getFkUserId()) {
+                    users2.add(user);
+                }
+            }
+        }
+
+        if (!rates.isEmpty()){
+            queue.setPlayersInQueue(users2);
+        }
+
+         return queue;
+    }
+
+    private JSONObject parseQueueToJsonObject(GameQueue queue){
+
+        List<JSONObject> playersList = new ArrayList<>();
+
+        for (User user : queue.getPlayersInQueue()) {
+            JSONObject entity = new JSONObject();
+            entity.put("steamId", user.getSteamId());
+            entity.put("login", user.getLogin());
+            entity.put("id", user.getId());
+
+            playersList.add(entity);
+        }
+
+        JSONObject object = new JSONObject();
+        object.put("playersInQueue", playersList);
+        object.put("gameName", queue.getGameName());
+        object.put("id", queue.getId());
+
+        return object;
+    }
+
+    public double getOverallRateForUser(String userLogin){
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.getByLogin(userLogin));
+        double rates = -1;
+        if(optionalUser.isPresent()) {
+
+            List<Optional<Rate>> optionalList = rateRepository.findAllByFkUserId(optionalUser.get().getId());
+
+            rates = optionalList.stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .mapToDouble(Rate::getRateValue)
+                    .average().getAsDouble();
+        }
+        return  rates;
+    }
 
 }

@@ -1,11 +1,15 @@
 package com.example.zzpj.queue;
 
+import com.example.zzpj.queue.exception.GameQueueNotExistException;
+import com.example.zzpj.ranking.RateService;
 import com.example.zzpj.security.UserService;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 
 @RestController
@@ -14,11 +18,13 @@ public class GameQueueController {
 
     GameQueueService gameQueueService;
     UserService userService;
+    RateService rateService;
 
     @Autowired
-    public GameQueueController(GameQueueService gameQueueService, UserService userService) {
+    public GameQueueController(GameQueueService gameQueueService, UserService userService, RateService rateService) {
         this.gameQueueService = gameQueueService;
         this.userService = userService;
+        this.rateService = rateService;
     }
 
 
@@ -49,14 +55,23 @@ public class GameQueueController {
 
     @GetMapping()
     @ResponseBody
-    public List<GameQueue> findAll(){
-        return gameQueueService.findAllGameQueue();
+    public ResponseEntity findAll(){
+        try {
+            return ResponseEntity.ok(gameQueueService.findAllGameQueue());
+        } catch (GameQueueNotExistException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/id")
-    @ResponseBody
-    public GameQueue findByGameName(@RequestParam String gameName){
-        return gameQueueService.findGameQueue(gameName);
+    public ResponseEntity findByGameName(@RequestParam String gameName){
+        try {
+            return ResponseEntity.ok(gameQueueService.findGameQueue(gameName));
+        } catch (GameQueueNotExistException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 

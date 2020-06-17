@@ -31,4 +31,5 @@ public class RateController {
                 ? new ResponseEntity<>(rates, HttpStatus.OK)
                 : new ResponseEntity<>(rates, HttpStatus.NOT_FOUND);
     }
+
 }
