@@ -136,6 +136,7 @@ public class SquadService {
             throw new SquadNotExistException("Squad with " + squadId + " id not exist");
     }
 
+
     public List<Squad> getAllSquadsForUser(long userId) {
         List<Squad> squads = squadRepository.findAll();
         List<Squad> result = new ArrayList<>();
@@ -153,4 +154,5 @@ public class SquadService {
         return squadRepository.findById(squadId)
                 .orElseThrow(() -> new ApiRequestException("Squad does not exist."));
     }
+
 }

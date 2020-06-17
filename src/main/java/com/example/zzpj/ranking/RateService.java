@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.Entity;
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -121,4 +122,5 @@ public class RateService {
     public Rate getRateById(final long id) {
         return rateRepository.findById(id).orElseThrow();
     }
+
 }

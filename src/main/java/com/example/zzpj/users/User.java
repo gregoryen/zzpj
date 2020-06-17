@@ -3,6 +3,7 @@ package com.example.zzpj.users;
 import com.example.zzpj.squad.Squad;
 import com.example.zzpj.queue.GameQueue;
 import com.example.zzpj.game.Game;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
@@ -44,15 +45,15 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "game_app_id", referencedColumnName = "app_id"))
     private Collection<Game> Games;
 
-    @JsonManagedReference
+    @JsonBackReference
     @ManyToMany
-    //@JsonIgnore
     @JoinTable(name = "user_queue",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "queue_id"))
     private List<GameQueue> queues;
 
     @ManyToMany
+    @JsonManagedReference
     @JsonIgnore
     @JoinTable(name = "user_squad",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -12,4 +12,6 @@ public interface RateRepository extends JpaRepository<Rate, Long> {
 
     Optional<Rate> findByFkUserIdAndFkSquadId(final long fkUserId, final long fkSquadId);
     List<Optional<Rate>> findAllByFkSquadId(final long fkSquadId);
+    List<Optional<Rate>> findAllByFkUserId(final long fkUserId);
+    Optional<Rate> findByFkUserId(final long fkUserId);
 }

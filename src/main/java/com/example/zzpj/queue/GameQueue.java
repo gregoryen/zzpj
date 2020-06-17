@@ -12,7 +12,6 @@ import java.util.List;
 
 @Data
 @Entity
-//@Builder
 @Table(name="game_queue")
 public class GameQueue {
 
@@ -21,15 +20,17 @@ public class GameQueue {
     private Long id;
     private String gameName;
 
+    @JsonManagedReference
     @ManyToMany(mappedBy = "queues")
     private List<User> playersInQueue;
 
     public GameQueue() {
         playersInQueue = new LinkedList<>();
     }
+
     public GameQueue(String gameName){
+        this();
         this.gameName = gameName;
-        playersInQueue = new LinkedList<>();
     }
 
     public void addPlayerToQueue(User user){

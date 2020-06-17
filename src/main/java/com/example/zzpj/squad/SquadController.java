@@ -82,4 +82,7 @@ public class SquadController {
     public Squad getSquadInfo(@PathVariable long squadId) {
         return squadService.getSquadInfoBySquadId(squadId);
     }
+
+
+
 }
